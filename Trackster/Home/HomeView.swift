@@ -9,9 +9,22 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            NavigationLink(value: HomeRoute.recording) {
+                VStack {
+                    Image(systemName: "play.fill")
+                    Text("Start Run")
+                }
+            }
+            .navigationDestination(for: HomeRoute.self) { _ in
+                RecordingView()
+            }
+            .font(.largeTitle)
+        }
     }
 }
+
+enum HomeRoute: Hashable { case recording }
 
 #Preview {
     HomeView()

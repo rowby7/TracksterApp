@@ -10,21 +10,20 @@ import SwiftData
 
 struct RootTabView: View {
     var body: some View {
+       
         TabView {
-            Text("Home")
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
+            Tab("Home", systemImage: "house") {
+                HomeView()
+            }
             
-            HistoryView()
-                .tabItem {
-                    Label("History", systemImage: "archivebox")
-                }
+            Tab("History", systemImage: "archivebox") {
+                HistoryView()
+            }
             
-            Text("Profile")
-                .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle")
-                }
+            Tab("Profile", systemImage: "person.crop.circle") {
+                Text("Profile")
+            }
+            
         }
     }
 }
