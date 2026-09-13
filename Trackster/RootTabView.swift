@@ -14,6 +14,7 @@ struct RootTabView: View {
         TabView {
             Tab("Home", systemImage: "house") {
                 HomeView()
+                   
             }
             
             Tab("History", systemImage: "archivebox") {

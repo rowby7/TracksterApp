@@ -10,7 +10,7 @@ import SwiftData
 
 struct RecordingView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.modelContext) private var runContext
     @State private var stopwatch = StopwatchViewModel()
 
     var body: some View {
@@ -35,10 +35,11 @@ struct RecordingView: View {
         .onAppear {
             stopwatch.start()
         }
+        .appTitle()
     }
 
     private func stopRecording() {
-        stopwatch.stopAndSave(to: modelContext)
+        stopwatch.stopAndSave(to: runContext)
         dismiss()
     }
 }

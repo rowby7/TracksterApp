@@ -31,10 +31,10 @@ class StopwatchViewModel {
         return String(format: "%02d:%02d.%02d", minutes, seconds, milliseconds)
     }
 
-    func stopAndSave(to modelContext: ModelContext) {
+    func stopAndSave(to runContext: ModelContext) {
         isRunning = false
         guard let startDate else { return }
         let record = StopwatchModel(startDate: startDate, endDate: .now, duration: elapsed(at: .now))
-        modelContext.insert(record)
+        runContext.insert(record)
     }
 }

@@ -20,6 +20,7 @@ struct HomeView: View {
                 RecordingView()
             }
             .font(.largeTitle)
+            .appTitle()
         }
     }
 }
