@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Observable
-class StopwatchViewModel {
+class RunViewModel {
     private(set) var startDate: Date?
     private(set) var isRunning = false
 
@@ -28,13 +28,13 @@ class StopwatchViewModel {
         let minutes = Int(interval) / 60
         let seconds = Int(interval) % 60
         let milliseconds = Int((interval.truncatingRemainder(dividingBy: 1)) * 100)
-        return String(format: "%02d:%02d.%02d", minutes, seconds, milliseconds)
+        return String(format: "%02d:%02d:%02d", minutes, seconds, milliseconds)
     }
 
     func stopAndSave(to runContext: ModelContext) {
         isRunning = false
         guard let startDate else { return }
-        let record = StopwatchModel(startDate: startDate, endDate: .now, duration: elapsed(at: .now))
+        let record = Run(startDate: startDate, endDate: .now, duration: elapsed(at: .now))
         runContext.insert(record)
     }
 }

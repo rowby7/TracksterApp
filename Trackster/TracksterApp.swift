@@ -12,8 +12,7 @@ import SwiftData
 struct TracksterApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
-            StopwatchModel.self
+            Run.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

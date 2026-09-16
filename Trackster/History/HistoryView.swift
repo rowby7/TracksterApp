@@ -11,28 +11,57 @@ import SwiftData
 
 struct HistoryView: View {
     
-    @Query(sort: \StopwatchModel.startDate, order: .reverse) private var runs: [StopwatchModel]
-
+    @Query(sort: \Run.startDate, order: .reverse) private var runs: [Run]
+    @State private var healthKitManager = HealthKitManager()
+    @Environment(\.modelContext) private var runContext
+    
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack {
-                    ForEach(runs) { run in
-                        TimerDisplayView(run: run)
+            Group {
+                if runs.isEmpty {
+                    ContentUnavailableView(
+                        "No Runs Yet",
+                        systemImage: "figure.run.circle",
+                        description: Text("Start a run or import from Apple Health to see it here.")
+                    )
+                } else {
+                    List {
+                        ForEach(runs) { run in
+                            TimerDisplayView(run: run)
+                                .listRowSeparator(.hidden)
+                                .glassEffect()
+                                .swipeActions(edge: .trailing) {
+                                    Button("Delete", systemImage: "trash", role: .destructive) {
+                                        deleteRun(run)
+                                    }
+                                }
+                        }
                     }
-                    .padding(.horizontal, 12)
+                    .listStyle(.plain)
+                    
+                    
                 }
-                .appTitle("History")
+            }
+            .appTitle("Run History")
+            .task {
+                try? await healthKitManager.importWorkouts(into: runContext)
             }
         }
+      
+       
     }
+    
+    
+    private func deleteRun(_ run: Run) {
+          runContext.delete(run)
+      }
 }
 
 
 // MARK: - Timer display
 
 struct TimerDisplayView: View {
-    let run: StopwatchModel
+    let run: Run
     
     var body: some View {
         
@@ -47,14 +76,18 @@ struct TimerDisplayView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding(12)
-        .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.background)
-                .shadow(radius: 2)
-        }
+//        .background {
+//            RoundedRectangle(cornerRadius: 16)
+//                .fill(.background)
+//                .shadow(radius: 2)
+//        }
+        .padding(.horizontal, 12)
 
     }
+   
 }
+
+
 // TODO: map card for gps
 //struct MapCardView: View {
 //    var body: some View {

@@ -11,7 +11,7 @@ import SwiftData
 struct RecordingView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var runContext
-    @State private var stopwatch = StopwatchViewModel()
+    @State private var stopwatch = RunViewModel()
 
     var body: some View {
         VStack {

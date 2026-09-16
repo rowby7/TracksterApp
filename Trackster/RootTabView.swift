@@ -22,7 +22,7 @@ struct RootTabView: View {
             }
             
             Tab("Profile", systemImage: "person.crop.circle") {
-                Text("Profile")
+                ProfileView()
             }
             
         }
