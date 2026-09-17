@@ -46,7 +46,7 @@ Small wins. Get the house in order before building the extension.
       from the simulator is fine at this stage.)
 - [x] Add an empty state to `HistoryView`: `ContentUnavailableView` when `runs.isEmpty`.
 - [x] Swipe-to-delete on history rows (`runContext.delete(run)`).
-- [ ] Stop swallowing HealthKit errors. `try? await` in `HistoryView.task` hides every
+- [x] Stop swallowing HealthKit errors. `try? await` in `HistoryView.task` hides every
       failure — surface a banner or at least log it.
 
 **Done when:** no template code left, history handles zero runs and lets you remove one.

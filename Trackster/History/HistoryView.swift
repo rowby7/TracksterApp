@@ -12,7 +12,7 @@ import SwiftData
 struct HistoryView: View {
     
     @Query(sort: \Run.startDate, order: .reverse) private var runs: [Run]
-    @State private var healthKitManager = HealthKitManager()
+    @State private var viewModel = HistoryViewModel()
     @Environment(\.modelContext) private var runContext
     
     var body: some View {
@@ -44,8 +44,13 @@ struct HistoryView: View {
             }
             .appTitle("Run History")
             .task {
-                try? await healthKitManager.importWorkouts(into: runContext)
+                await viewModel.importWorkouts(into: runContext)
             }
+            .alert("Unable to import Health Data", isPresented: $viewModel.showImportError) {
+            } message: {
+                Text(viewModel.importErrorMessage)
+            }
+          
         }
       
        

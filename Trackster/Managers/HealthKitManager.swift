@@ -39,6 +39,7 @@ class HealthKitManager {
            }
        }
     
+    
     func importWorkouts(into runContext: ModelContext) async throws {
           let workouts = try await fetchWorkouts()
 
