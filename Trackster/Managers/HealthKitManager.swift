@@ -15,7 +15,8 @@ class HealthKitManager {
 
     func requestAuthorization() async throws {
         let workoutType = HKObjectType.workoutType()
-        try await healthStore.requestAuthorization(toShare: [], read: [workoutType])
+        let routeType = HKSeriesType.workoutRoute()
+        try await healthStore.requestAuthorization(toShare: [], read: [workoutType, routeType])
     }
     
     func fetchWorkouts() async throws -> [HKWorkout] {

@@ -11,7 +11,7 @@ sitting. Check it off, commit, move on. Don't skip ahead — each phase assumes 
 
 ---
 
-## Where it is today (2026-09-15)
+## Where it is today (2026-09-16)
 
 Working:
 - Tab shell: Home / History / Profile
@@ -27,7 +27,7 @@ Not there yet:
 - Profile is one button that vanishes after you tap it
 - `Item.swift` is Xcode template leftover, still registered in the schema
 - Empty stub files: `HomeModel`, `HomeViewModel`, `HistoryModel`
-- History has no empty state, no detail screen, no delete
+- History has no detail screen
 - Tests are template stubs
 - `SWIFT_VERSION = 5.0` — not on Swift 6 language mode yet
 
@@ -53,12 +53,44 @@ Small wins. Get the house in order before building the extension.
 
 ---
 
-## Phase 2 — Distance and pace (4–6 days) ← *the real feature*
+## Phase 2 — Complete the HealthKit import (3–5 days) ← *you are here*
 
-This is what turns it into a running app. Take your time here.
+Every Watch run already carries this data. Pull all of it before writing any GPS code.
 
-- [ ] Add `NSLocationWhenInUseUsageDescription` + `NSLocationAlwaysAndWhenInUseUsageDescription`
-      to build settings, and the `location` background mode capability.
+- [x] Add `HKSeriesType.workoutRoute()` to the read set in `requestAuthorization`, and
+      update `INFOPLIST_KEY_NSHealthShareUsageDescription` to mention routes. (No
+      CoreLocation keys needed — reading stored routes never touches the GPS.)
+- [x] Widen `Run` with optional fields: `distance`, `averageHeartRate`, `activeEnergy`,
+      `elevationAscended`, `maxElevation`. Optional because stopwatch runs won't have
+      them until Phase 3.
+- [ ] Distance + calories via `workout.statistics(for:)` — `.sumQuantity()` on
+      `.distanceWalkingRunning` and `.activeEnergyBurned`. `workout.totalDistance` and
+      `.totalEnergyBurned` are deprecated; don't reach for them.
+- [ ] Average heart rate: `workout.statistics(for: HKQuantityType(.heartRate))?.averageQuantity()`.
+- [ ] Elevation gain from workout metadata: `HKMetadataKeyElevationAscended`. Only present
+      if the recording device had a barometric altimeter — handle nil.
+- [ ] `@Model RoutePoint` (lat, lon, timestamp, altitude) with
+      `@Relationship(deleteRule: .cascade)` from `Run`. Fetch with `HKWorkoutRouteQuery` —
+      its callback fires repeatedly, accumulate until `done == true`.
+- [ ] Max elevation — *not* a HealthKit field. Derive as the max altitude across the run's
+      `RoutePoint`s. Depends on the box above.
+- [ ] Pace — also not stored. Derive `duration / distance`, format `mm:ss /mi`.
+- [ ] Surface the new stats on the history card, hiding whatever is nil.
+
+**Done when:** an imported Watch run shows distance, pace, heart rate, calories and
+elevation — and a stopwatch-only run still renders without holes.
+
+---
+
+## Phase 3 — Live GPS: distance and pace on the phone (4–6 days)
+
+Same numbers as Phase 2, but earned from the phone's own GPS so a run works without a
+Watch. Take your time here.
+
+- [ ] Add `NSLocationWhenInUseUsageDescription` to build settings and the `location`
+      background mode capability. Skip the Always key — When In Use plus
+      `allowsBackgroundLocationUpdates` covers a run that starts in the app, and Always
+      is the scarier prompt for no gain.
 - [ ] Build `LocationManager` (`@Observable`, wraps `CLLocationManager`):
       request auth, `startUpdatingLocation`, `allowsBackgroundLocationUpdates = true`,
       `activityType = .fitness`, `distanceFilter` ~5m.
@@ -66,19 +98,18 @@ This is what turns it into a running app. Take your time here.
       while you're at it. Accumulate `totalDistance` by summing `location.distance(from: previous)`.
 - [ ] Filter junk points: drop anything with `horizontalAccuracy > 20` or a negative value,
       and drop points older than ~5 seconds (`timestamp` check).
-- [ ] Show live distance + current pace on `RecordingView` under the timer.
-      Pace = `duration / distanceInMiles` → format as `mm:ss /mi`.
-- [ ] Persist the route: new `@Model RoutePoint` (lat, lon, timestamp, optional elevation)
-      with a `@Relationship(deleteRule: .cascade)` from `Run`.
-- [ ] Store `distance` and `averagePace` on `Run` so History doesn't recompute every row.
-- [ ] Add distance + pace to the history card.
+- [ ] Show live distance + current pace on `RecordingView` under the timer, reusing the
+      pace formatting from Phase 2.
+- [ ] Write `RoutePoint`s as you record, into the same model Phase 2 already created.
+- [ ] Populate `distance`, `elevationAscended` and `maxElevation` on app-recorded `Run`s,
+      so a stopwatch run and an imported run carry the same shape of data.
 
-**Done when:** you can run around the block, come back, and the app tells you how far you
-went and how fast.
+**Done when:** you can run around the block with no Watch, come back, and the app tells
+you how far you went and how fast.
 
 ---
 
-## Phase 3 — Make a run feel real (3–4 days)
+## Phase 4 — Make a run feel real (3–4 days)
 
 - [ ] Pause / resume. Track `accumulatedTime` plus a current `segmentStart` instead of a
       single `startDate`. Pause also pauses location updates.
@@ -95,7 +126,7 @@ went and how fast.
 
 ---
 
-## Phase 4 — The map (2–3 days)
+## Phase 5 — The map (2–3 days)
 
 Uncomment that `MapCardView` TODO you left in `HistoryView.swift`.
 
@@ -110,7 +141,7 @@ Uncomment that `MapCardView` TODO you left in `HistoryView.swift`.
 
 ---
 
-## Phase 5 — Profile & stats (2–3 days)
+## Phase 6 — Profile & stats (2–3 days)
 
 - [ ] Real `ProfileView`: total runs, total distance, total time, longest run, best pace.
 - [ ] Move HealthKit import to a proper Settings row with state
@@ -123,7 +154,7 @@ Uncomment that `MapCardView` TODO you left in `HistoryView.swift`.
 
 ---
 
-## Phase 6 — Polish & ship (ongoing)
+## Phase 7 — Polish & ship (ongoing)
 
 - [ ] Move `SWIFT_VERSION` to 6.0 and fix the concurrency warnings. Run the
       `swift-concurrency-pro` and `swiftui-pro` skills over the codebase.
@@ -140,7 +171,7 @@ Uncomment that `MapCardView` TODO you left in `HistoryView.swift`.
 
 ## Parked (decide later, don't build yet)
 
-- watchOS companion app — big lift, changes the architecture. Worth it, but not before Phase 5.
+- watchOS companion app — big lift, changes the architecture. Worth it, but not before Phase 6.
 - Goals & training plans
 - Social / sharing a run
 - Audio cues mid-run ("mile 2, 8:47 pace")
