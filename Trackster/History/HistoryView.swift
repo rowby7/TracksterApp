@@ -29,7 +29,6 @@ struct HistoryView: View {
                         ForEach(runs) { run in
                             TimerDisplayView(run: run)
                                 .listRowSeparator(.hidden)
-                                .glassEffect()
                                 .swipeActions(edge: .trailing) {
                                     Button("Delete", systemImage: "trash", role: .destructive) {
                                         deleteRun(run)
@@ -67,29 +66,76 @@ struct HistoryView: View {
 
 struct TimerDisplayView: View {
     let run: Run
-    
+
     var body: some View {
-        
+
         VStack(alignment: .leading, spacing: 10) {
             Text(run.startDate, format: .dateTime.day().month().year())
                 .font(.subheadline)
                 .opacity(0.6)
                 .padding(.horizontal, 3)
-            
+
+            HStack (spacing: 20){
+                StatColumnView(title: "Distance", value: distanceText)
+                StatColumnView(title: "BPM", value: bpmText)
+                StatColumnView(title: "Elevation Gain", value: elevationGainText)
+            }
             Text(Duration.seconds(run.duration), format: .time(pattern: .minuteSecond))
                 .font(.largeTitle.bold())
-                .frame(maxWidth: .infinity, alignment: .center)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(12)
-//        .background {
-//            RoundedRectangle(cornerRadius: 16)
-//                .fill(.background)
-//                .shadow(radius: 2)
-//        }
-        .padding(.horizontal, 12)
+        .padding(24)
 
     }
-   
+    
+    
+
+    private var distanceText: String {
+        guard let distance = run.distance else { return "--" }
+        return Measurement(value: distance, unit: UnitLength.meters)
+            .converted(to: .miles)
+            .formatted(.measurement(width: .abbreviated, numberFormatStyle: .number.precision(.fractionLength(2))))
+    }
+
+    private var bpmText: String {
+        guard let bpm = run.averageHeartRate else { return "--" }
+        return "\(Int(bpm.rounded())) bpm"
+    }
+
+    private var elevationGainText: String {
+        guard let elevationGain = run.elevationGain else { return "--" }
+        return Measurement(value: elevationGain, unit: UnitLength.meters)
+            .converted(to: .feet)
+            .formatted(.measurement(width: .abbreviated, numberFormatStyle: .number.precision(.fractionLength(0))))
+    }
+
+}
+
+private struct StatColumnView: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        VStack (alignment: .leading){
+            Text(title)
+                .font(.caption)
+            Text(value)
+                .font(.title2)
+        }
+    }
+}
+
+#Preview("Timer Display") {
+    TimerDisplayView(run: Run(
+        startDate: .now,
+        endDate: .now.addingTimeInterval(1834),
+        duration: 1834,
+        distance: 3169,
+        averageHeartRate: 142,
+        elevationGain: 45
+    ))
+    .glassEffect()
+    .padding()
 }
 
 
@@ -108,5 +154,4 @@ struct TimerDisplayView: View {
 #Preview {
     HistoryView()
 }
-
 

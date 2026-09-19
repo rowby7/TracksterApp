@@ -20,10 +20,18 @@ final class Run {
     var maxElevation:       Double?
     var healthKitID:        UUID?   // nil = recorded in-app, set = imported from HealthKit
 
-    init(startDate: Date, endDate: Date, duration: TimeInterval, healthKitID: UUID? = nil) {
+    init(startDate: Date, endDate: Date, duration: TimeInterval,
+         distance: Double? = nil, averageHeartRate: Double? = nil,
+         activeEnergy: Double? = nil, elevationGain: Double? = nil,
+         maxElevation: Double? = nil, healthKitID: UUID? = nil) {
         self.startDate =    startDate
         self.endDate =      endDate
         self.duration =     duration
+        self.distance =     distance
+        self.averageHeartRate = averageHeartRate
+        self.activeEnergy = activeEnergy
+        self.elevationGain = elevationGain
+        self.maxElevation = maxElevation
         self.healthKitID =  healthKitID
     }
 }

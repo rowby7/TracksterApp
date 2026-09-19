@@ -17,8 +17,10 @@ class HistoryViewModel {
     var showImportError = false
     var importErrorMessage = ""
     
+    
     func importWorkouts(into runContext: ModelContext) async {
         do {
+            try await healthKitManager.requestAuthorization()
             try await healthKitManager.importWorkouts(into: runContext)
         } catch {
             

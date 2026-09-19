@@ -63,11 +63,11 @@ Every Watch run already carries this data. Pull all of it before writing any GPS
 - [x] Widen `Run` with optional fields: `distance`, `averageHeartRate`, `activeEnergy`,
       `elevationAscended`, `maxElevation`. Optional because stopwatch runs won't have
       them until Phase 3.
-- [ ] Distance + calories via `workout.statistics(for:)` — `.sumQuantity()` on
+- [x] Distance + calories via `workout.statistics(for:)` — `.sumQuantity()` on
       `.distanceWalkingRunning` and `.activeEnergyBurned`. `workout.totalDistance` and
       `.totalEnergyBurned` are deprecated; don't reach for them.
-- [ ] Average heart rate: `workout.statistics(for: HKQuantityType(.heartRate))?.averageQuantity()`.
-- [ ] Elevation gain from workout metadata: `HKMetadataKeyElevationAscended`. Only present
+- [x] Average heart rate: `workout.statistics(for: HKQuantityType(.heartRate))?.averageQuantity()`.
+- [x] Elevation gain from workout metadata: `HKMetadataKeyElevationAscended`. Only present
       if the recording device had a barometric altimeter — handle nil.
 - [ ] `@Model RoutePoint` (lat, lon, timestamp, altitude) with
       `@Relationship(deleteRule: .cascade)` from `Run`. Fetch with `HKWorkoutRouteQuery` —
