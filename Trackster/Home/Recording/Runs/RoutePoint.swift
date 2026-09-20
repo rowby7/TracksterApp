@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class RoutePoint {
+nonisolated final class RoutePoint {
     var latitude: Double
     var longitude: Double
     var timestamp: Date

@@ -16,12 +16,16 @@ class HistoryViewModel {
     
     var showImportError = false
     var importErrorMessage = ""
+    var isImporting = false
     
     
-    func importWorkouts(into runContext: ModelContext) async {
+    func importWorkouts(container: ModelContainer) async {
+        isImporting = true
+        defer { isImporting = false }
         do {
             try await healthKitManager.requestAuthorization()
-            try await healthKitManager.importWorkouts(into: runContext)
+            let importer = RunImporter(modelContainer: container)
+            try await importer.importWorkouts()
         } catch {
             
             importErrorMessage = "Couldn't import workouts from Apple Health. Check that Trackster has access in the Health app, then try again."

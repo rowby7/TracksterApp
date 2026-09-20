@@ -44,7 +44,14 @@ struct HistoryView: View {
             }
             .appTitle("Run History")
             .task {
-                await viewModel.importWorkouts(into: runContext)
+                await viewModel.importWorkouts(container: runContext.container)
+            }
+            .toolbar {
+                if viewModel.isImporting && !runs.isEmpty {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        ProgressView()
+                    }
+                }
             }
             .alert("Unable to import Health Data", isPresented: $viewModel.showImportError) {
             } message: {

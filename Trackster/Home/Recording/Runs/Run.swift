@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Run {
+nonisolated final class Run {
     #Index<Run>([\.startDate])
     
     var startDate:          Date

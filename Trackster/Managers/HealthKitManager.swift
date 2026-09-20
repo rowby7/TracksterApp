@@ -7,10 +7,9 @@
 
 import Foundation
 import HealthKit
-import SwiftData
+import CoreLocation
 
-@Observable
-class HealthKitManager {
+nonisolated final class HealthKitManager {
     private let healthStore = HKHealthStore()
 
     func requestAuthorization() async throws {
@@ -27,33 +26,46 @@ class HealthKitManager {
         return try await descriptor.result(for: healthStore)
     }
     
-    
-    func importWorkouts(into runContext: ModelContext) async throws {
-          let workouts = try await fetchWorkouts()
-          let existingIDs = try runContext.fetch(FetchDescriptor<Run>())
-              .compactMap(\.healthKitID)
-          let existingIDSet = Set(existingIDs)
+    func routeLocations(for workout: HKWorkout) async throws -> [CLLocation] {
+        let predicate = HKQuery.predicateForObjects(from: workout)
 
-          for workout in workouts where !existingIDSet.contains(workout.uuid) {
-              let record = Run(
-                  startDate: workout.startDate,
-                  endDate: workout.endDate,
-                  duration: workout.duration,
-                  distance: workout.distanceInMeters,
-                  averageHeartRate: workout.averageHeartRateInBPM,
-                  activeEnergy: workout.activeEnergyInKilocalories,
-                  elevationGain: workout.elevationGainInMeters,
-                  healthKitID: workout.uuid
-              )
-              runContext.insert(record)
-          }
+        let routes: [HKWorkoutRoute] = try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: HKSeriesType.workoutRoute(),
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: samples as? [HKWorkoutRoute] ?? [])
+            }
+            healthStore.execute(query)
+        }
 
-          try runContext.save()
-      }
+        guard let route = routes.first else { return [] }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            var all: [CLLocation] = []
+            let query = HKWorkoutRouteQuery(route: route) { _, locations, done, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                all.append(contentsOf: locations ?? [])
+                if done {
+                    continuation.resume(returning: all)
+                }
+            }
+            healthStore.execute(query)
+        }
+    }
 }
 
 
-extension HKWorkout {
+nonisolated extension HKWorkout {
     var distanceInMeters: Double? {
         statistics(for: HKQuantityType(.distanceWalkingRunning))?
             .sumQuantity()?

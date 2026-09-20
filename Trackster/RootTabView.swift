@@ -17,7 +17,7 @@ struct RootTabView: View {
                    
             }
             
-            Tab("History", systemImage: "archivebox") {
+            Tab("History", systemImage: "figure.run.square.stack.fill") {
                 HistoryView()
             }
             
