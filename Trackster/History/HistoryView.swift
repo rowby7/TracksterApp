@@ -28,7 +28,7 @@ struct HistoryView: View {
                     List {
                         ForEach(runs) { run in
                             TimerDisplayView(run: run)
-                                .listRowSeparator(.hidden)
+                                .listRowSeparator(.visible)
                                 .swipeActions(edge: .trailing) {
                                     Button("Delete", systemImage: "trash", role: .destructive) {
                                         deleteRun(run)
@@ -37,6 +37,7 @@ struct HistoryView: View {
                         }
                     }
                     .listStyle(.plain)
+                    .scrollIndicators(.hidden)
                     
                     
                 }
@@ -68,27 +69,29 @@ struct TimerDisplayView: View {
     let run: Run
 
     var body: some View {
-
-        VStack(alignment: .leading, spacing: 10) {
-            Text(run.startDate, format: .dateTime.day().month().year())
-                .font(.subheadline)
-                .opacity(0.6)
-                .padding(.horizontal, 3)
-
-            HStack (spacing: 20){
-                StatColumnView(title: "Distance", value: distanceText)
-                StatColumnView(title: "BPM", value: bpmText)
-                StatColumnView(title: "Elevation Gain", value: elevationGainText)
+        
+        HStack(alignment: .top){
+            VStack(alignment: .leading, spacing: 10) {
+                Text(run.startDate, format: .dateTime.day().month().year())
+                    .font(.subheadline)
+                    .opacity(0.6)
+                
+                HStack (spacing: 20){
+                    StatColumnView(title: "Distance", value: distanceText)
+                    StatColumnView(title: "Avg. BPM", value: bpmText)
+                    StatColumnView(title: "Elevation Gain", value: elevationGainText)
+                }
+                Text(Duration.seconds(run.duration), format: .time(pattern: .minuteSecond))
+                    .font(.largeTitle.bold())
             }
-            Text(Duration.seconds(run.duration), format: .time(pattern: .minuteSecond))
-                .font(.largeTitle.bold())
-                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Spacer()
+            
+            Image(systemName: "figure.run")
+                .font(.title)
         }
-        .padding(24)
-
+        
     }
-    
-    
 
     private var distanceText: String {
         guard let distance = run.distance else { return "--" }

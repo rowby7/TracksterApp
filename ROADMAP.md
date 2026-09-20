@@ -76,9 +76,18 @@ Every Watch run already carries this data. Pull all of it before writing any GPS
       `RoutePoint`s. Depends on the box above.
 - [ ] Pace — also not stored. Derive `duration / distance`, format `mm:ss /mi`.
 - [ ] Surface the new stats on the history card, hiding whatever is nil.
+- [ ] Route map on the history card, Strava-style: real tiles with the route drawn over
+      them. Use `MKMapSnapshotter` to render the region to an image, then draw the
+      polyline on top via `snapshot.point(for:)`. Do NOT put a live `Map` in a `List`
+      row — that's one MapKit instance per row, loading tiles while you scroll.
+- [ ] Cache the snapshots, keyed by run. Snapshotting is async and not cheap; without a
+      cache every scroll re-renders and you end up worse off than the live map you were
+      avoiding. Render once, reuse.
+- [ ] Handle both card shapes: an imported run draws a route, a stopwatch run has no
+      `RoutePoint`s at all. No empty thumbnail frame on runs without one.
 
-**Done when:** an imported Watch run shows distance, pace, heart rate, calories and
-elevation — and a stopwatch-only run still renders without holes.
+**Done when:** an imported Watch run shows its route shape plus distance, pace, heart
+rate, calories and elevation — and a stopwatch-only run still renders without holes.
 
 ---
 
@@ -126,9 +135,10 @@ you how far you went and how fast.
 
 ---
 
-## Phase 5 — The map (2–3 days)
+## Phase 5 — The real map (2–3 days)
 
-Uncomment that `MapCardView` TODO you left in `HistoryView.swift`.
+Phase 2's card thumbnails are just route shapes. This is where MapKit actually shows up —
+one map on screen at a time, so it can afford to be a real one.
 
 - [ ] `RunDetailView` — tap a history card, push to a full run breakdown.
 - [ ] Draw the route with `MapPolyline` over the run's `RoutePoint`s.
