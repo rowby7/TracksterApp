@@ -10,6 +10,8 @@ import SwiftData
 
 @Model
 final class Run {
+    #Index<Run>([\.startDate])
+    
     var startDate:          Date
     var endDate:            Date
     var duration:           TimeInterval
@@ -20,6 +22,9 @@ final class Run {
     var maxElevation:       Double?
     var healthKitID:        UUID?   // nil = recorded in-app, set = imported from HealthKit
 
+    @Relationship(deleteRule: .cascade, inverse: \RoutePoint.run)
+    var route: [RoutePoint] = []
+    
     init(startDate: Date, endDate: Date, duration: TimeInterval,
          distance: Double? = nil, averageHeartRate: Double? = nil,
          activeEnergy: Double? = nil, elevationGain: Double? = nil,
