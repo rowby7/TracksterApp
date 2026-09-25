@@ -18,7 +18,11 @@ struct TracksterApp: App {
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            #if DEBUG
+            SampleData.seedIfEmpty(container)
+            #endif
+            return container
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }

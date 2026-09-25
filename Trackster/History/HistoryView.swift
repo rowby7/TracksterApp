@@ -77,27 +77,32 @@ struct TimerDisplayView: View {
 
     var body: some View {
         
-        HStack(alignment: .top){
-            VStack(alignment: .leading, spacing: 10) {
-                Text(run.startDate, format: .dateTime.day().month().year())
-                    .font(.subheadline)
-                    .opacity(0.6)
-                
-                HStack (spacing: 20){
-                    StatColumnView(title: "Distance", value: distanceText)
-                    StatColumnView(title: "Avg. BPM", value: bpmText)
-                    StatColumnView(title: "Elevation Gain", value: elevationGainText)
+        VStack(alignment: .center) {
+            HStack(alignment: .top){
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(run.startDate, format: .dateTime.day().month().year())
+                        .font(.subheadline)
+                        .opacity(0.6)
+                    
+                    HStack (spacing: 20){
+                        StatColumnView(title: "Distance", value: distanceText)
+                        StatColumnView(title: "Avg. BPM", value: bpmText)
+                        StatColumnView(title: "Elevation Gain", value: elevationGainText)
+                    }
+                    Text(Duration.seconds(run.duration), format: .time(pattern: .minuteSecond))
+                        .font(.largeTitle.bold())
+                    
                 }
-                Text(Duration.seconds(run.duration), format: .time(pattern: .minuteSecond))
-                    .font(.largeTitle.bold())
+                
+                Spacer()
+                
+                Image(systemName: "figure.run")
+                    .font(.title)
             }
-            
-            Spacer()
-            
-            Image(systemName: "figure.run")
-                .font(.title)
+
+            RouteSnapshotView(points: run.route)
+                
         }
-        
     }
 
     private var distanceText: String {

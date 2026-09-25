@@ -69,13 +69,13 @@ Every Watch run already carries this data. Pull all of it before writing any GPS
 - [x] Average heart rate: `workout.statistics(for: HKQuantityType(.heartRate))?.averageQuantity()`.
 - [x] Elevation gain from workout metadata: `HKMetadataKeyElevationAscended`. Only present
       if the recording device had a barometric altimeter — handle nil.
-- [ ] `@Model RoutePoint` (lat, lon, timestamp, altitude) with
+- [x] `@Model RoutePoint` (lat, lon, timestamp, altitude) with
       `@Relationship(deleteRule: .cascade)` from `Run`. Fetch with `HKWorkoutRouteQuery` —
       its callback fires repeatedly, accumulate until `done == true`.
-- [ ] Max elevation — *not* a HealthKit field. Derive as the max altitude across the run's
+- [x] Max elevation — *not* a HealthKit field. Derive as the max altitude across the run's
       `RoutePoint`s. Depends on the box above.
 - [ ] Pace — also not stored. Derive `duration / distance`, format `mm:ss /mi`.
-- [ ] Surface the new stats on the history card, hiding whatever is nil.
+- [x] Surface the new stats on the history card, hiding whatever is nil.
 - [ ] Route map on the history card, Strava-style: real tiles with the route drawn over
       them. Use `MKMapSnapshotter` to render the region to an image, then draw the
       polyline on top via `snapshot.point(for:)`. Do NOT put a live `Map` in a `List`
@@ -137,8 +137,8 @@ you how far you went and how fast.
 
 ## Phase 5 — The real map (2–3 days)
 
-Phase 2's card thumbnails are just route shapes. This is where MapKit actually shows up —
-one map on screen at a time, so it can afford to be a real one.
+Phase 2's cards are static snapshot images. This is where a real, live, interactive map
+shows up — one on screen at a time, so it can afford to be one.
 
 - [ ] `RunDetailView` — tap a history card, push to a full run breakdown.
 - [ ] Draw the route with `MapPolyline` over the run's `RoutePoint`s.
