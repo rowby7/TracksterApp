@@ -8,18 +8,25 @@ import MapKit
 
 struct RouteSnapshotView: View {
     let points: [RoutePoint]
-
+    
     @Environment(\.displayScale) private var displayScale
     @State private var snapshot: MKMapSnapshotter.Snapshot?
-
+    
     private let renderSize = CGSize(width: 480, height: 270)
     private let aspectRatio: CGFloat = 16 / 9
-
+    
     var body: some View {
         Group {
             if let snapshot {
-                Image(uiImage: snapshot.image)
-                    .resizable()
+                ZStack {
+                    Image(uiImage: snapshot.image)
+                        .resizable()
+                    
+                    Canvas { context, size in
+                        let path = routePath(in: snapshot, canvasSize: size)
+                        context.stroke(path, with: .color(.orange), lineWidth: 4)
+                    }
+                }
             } else {
                 Rectangle()
                     .fill(.quaternary)
@@ -34,6 +41,28 @@ struct RouteSnapshotView: View {
             )
             print("display Size: \(displayScale)")
         }
+    }
+    
+    private func routePath(in snapshot: MKMapSnapshotter.Snapshot, canvasSize: CGSize) -> Path {
+        let scale = canvasSize.width / renderSize.width
+        
+        let ordered = points.sorted { $0.timestamp < $1.timestamp }
+        let step = max(1, ordered.count / 200)
+
+        let cgPoints = stride(from: 0, to: ordered.count, by: step).map { i in
+            let p = ordered[i]
+            let coordinate = CLLocationCoordinate2D(latitude: p.latitude, longitude: p.longitude)
+            let raw = snapshot.point(for: coordinate)
+            return CGPoint(x: raw.x * scale, y: raw.y * scale)
+        }
+        
+        var path = Path()
+        guard let first = cgPoints.first else { return path }
+        path.move(to: first)
+        for point in cgPoints.dropFirst() {
+            path.addLine(to: point)
+        }
+        return path
     }
 }
 
