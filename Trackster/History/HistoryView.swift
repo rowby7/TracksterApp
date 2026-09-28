@@ -88,6 +88,7 @@ struct TimerDisplayView: View {
                         StatColumnView(title: "Distance", value: distanceText)
                         StatColumnView(title: "Avg. BPM", value: bpmText)
                         StatColumnView(title: "Elevation Gain", value: elevationGainText)
+                        
                     }
                     Text(Duration.seconds(run.duration), format: .time(pattern: .minuteSecond))
                         .font(.largeTitle.bold())
@@ -100,7 +101,7 @@ struct TimerDisplayView: View {
                     .font(.title)
             }
 
-            RouteSnapshotView(points: run.route)
+            RouteSnapshotView(points: run.route, id: run.persistentModelID)
                 
         }
     }

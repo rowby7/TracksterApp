@@ -1,77 +1,56 @@
-//
-//  RouteSnapshotView.swift
-//  Trackster
-//
-
 import SwiftUI
 import MapKit
+import SwiftData
 
 struct RouteSnapshotView: View {
     let points: [RoutePoint]
-    
+    let id: PersistentIdentifier
+
     @Environment(\.displayScale) private var displayScale
-    @State private var snapshot: MKMapSnapshotter.Snapshot?
-    
+    @State private var image: UIImage?
+
     private let renderSize = CGSize(width: 480, height: 270)
     private let aspectRatio: CGFloat = 16 / 9
-    
+
     var body: some View {
         Group {
-            if let snapshot {
-                ZStack {
-                    Image(uiImage: snapshot.image)
-                        .resizable()
-                    
-                    Canvas { context, size in
-                        let path = routePath(in: snapshot, canvasSize: size)
-                        context.stroke(path, with: .color(.orange), lineWidth: 4)
-                    }
-                }
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
             } else {
                 Rectangle()
                     .fill(.quaternary)
+                    .overlay {
+                        ProgressView()
+                    }
             }
         }
         .aspectRatio(aspectRatio, contentMode: .fit)
         .task {
-            snapshot = try? await RouteSnapshotter().snapshot(
+            image = await RouteSnapshotter.shared.image(
                 for: points,
+                id: id,
                 size: renderSize,
                 scale: displayScale
             )
-            print("display Size: \(displayScale)")
         }
-    }
-    
-    private func routePath(in snapshot: MKMapSnapshotter.Snapshot, canvasSize: CGSize) -> Path {
-        let scale = canvasSize.width / renderSize.width
-        
-        let ordered = points.sorted { $0.timestamp < $1.timestamp }
-        let step = max(1, ordered.count / 200)
-
-        let cgPoints = stride(from: 0, to: ordered.count, by: step).map { i in
-            let p = ordered[i]
-            let coordinate = CLLocationCoordinate2D(latitude: p.latitude, longitude: p.longitude)
-            let raw = snapshot.point(for: coordinate)
-            return CGPoint(x: raw.x * scale, y: raw.y * scale)
-        }
-        
-        var path = Path()
-        guard let first = cgPoints.first else { return path }
-        path.move(to: first)
-        for point in cgPoints.dropFirst() {
-            path.addLine(to: point)
-        }
-        return path
     }
 }
 
 #Preview("Route snapshot") {
-    RouteSnapshotView(points: [
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Run.self, RoutePoint.self, configurations: config)
+
+    let run = Run(startDate: .now, endDate: .now, duration: 100)
+    container.mainContext.insert(run)
+    run.route = [
         RoutePoint(latitude: 40.7580, longitude: -73.9855, timestamp: .now),
-        RoutePoint(latitude: 40.7614, longitude: -73.9776, timestamp: .now),
-        RoutePoint(latitude: 40.7644, longitude: -73.9730, timestamp: .now),
-        RoutePoint(latitude: 40.7681, longitude: -73.9712, timestamp: .now)
-    ])
-    .padding()
+        RoutePoint(latitude: 40.7614, longitude: -73.9776, timestamp: .now.addingTimeInterval(60)),
+        RoutePoint(latitude: 40.7644, longitude: -73.9730, timestamp: .now.addingTimeInterval(120)),
+        RoutePoint(latitude: 40.7681, longitude: -73.9712, timestamp: .now.addingTimeInterval(180))
+    ]
+
+    return RouteSnapshotView(points: run.route, id: run.persistentModelID)
+        .padding()
+        .modelContainer(container)
 }
