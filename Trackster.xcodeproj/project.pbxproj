@@ -29,9 +29,22 @@
 		896B42F33053AE3100046384 /* TracksterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TracksterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8978CD5C30728940001BFB55 /* Exceptions for "Trackster" folder in "Trackster" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 896B42D93053AE3000046384 /* Trackster */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		896B42DC3053AE3000046384 /* Trackster */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8978CD5C30728940001BFB55 /* Exceptions for "Trackster" folder in "Trackster" target */,
+			);
 			path = Trackster;
 			sourceTree = "<group>";
 		};
@@ -403,7 +416,9 @@
 				DEVELOPMENT_TEAM = 2U4X6239B7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Trackster/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Trackster reads your workout history from Health so your Apple Watch runs appear alongside runs recorded in the app.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Trackster uses your location while you run to measure your distance and draw your route.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -437,7 +452,9 @@
 				DEVELOPMENT_TEAM = 2U4X6239B7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Trackster/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Trackster reads your workout history from Health so your Apple Watch runs appear alongside runs recorded in the app.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Trackster uses your location while you run to measure your distance and draw your route.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -19,7 +19,10 @@ struct RecordingView: View {
                 TimelineView(.periodic(from: start, by: 0.03)) { context in
                     Text(stopwatch.formattedElapsed(at: context.date))
                         .font(.largeTitle)
+                    
                 }
+                
+                Text("Total Distance: \(distanceText)")
             } else {
                 Text("00:00")
                     .font(.largeTitle)
@@ -36,6 +39,12 @@ struct RecordingView: View {
             stopwatch.start()
         }
         .appTitle()
+    }
+
+    private var distanceText: String {
+        Measurement(value: stopwatch.totalDistance, unit: UnitLength.meters)
+            .converted(to: .miles)
+            .formatted(.measurement(width: .abbreviated, numberFormatStyle: .number.precision(.fractionLength(2))))
     }
 
     private func stopRecording() {

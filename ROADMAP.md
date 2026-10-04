@@ -74,7 +74,6 @@ Every Watch run already carries this data. Pull all of it before writing any GPS
       its callback fires repeatedly, accumulate until `done == true`.
 - [x] Max elevation — *not* a HealthKit field. Derive as the max altitude across the run's
       `RoutePoint`s. Depends on the box above.
-- [ ] Pace — also not stored. Derive `duration / distance`, format `mm:ss /mi`.
 - [x] Surface the new stats on the history card, hiding whatever is nil.
 - [x] Route map on the history card, Strava-style: real tiles with the route drawn over
       them. Use `MKMapSnapshotter` to render the region to an image, then draw the
@@ -83,11 +82,8 @@ Every Watch run already carries this data. Pull all of it before writing any GPS
 - [x] Cache the snapshots, keyed by run. Snapshotting is async and not cheap; without a
       cache every scroll re-renders and you end up worse off than the live map you were
       avoiding. Render once, reuse.
-- [ ] Handle both card shapes: an imported run draws a route, a stopwatch run has no
-      `RoutePoint`s at all. No empty thumbnail frame on runs without one.
-
-**Done when:** an imported Watch run shows its route shape plus distance, pace, heart
-rate, calories and elevation — and a stopwatch-only run still renders without holes.
+**Done when:** an imported Watch run shows its route shape plus distance, heart rate,
+calories and elevation on the history card.
 
 ---
 
@@ -96,19 +92,23 @@ rate, calories and elevation — and a stopwatch-only run still renders without 
 Same numbers as Phase 2, but earned from the phone's own GPS so a run works without a
 Watch. Take your time here.
 
-- [ ] Add `NSLocationWhenInUseUsageDescription` to build settings and the `location`
+- [x] Add `NSLocationWhenInUseUsageDescription` to build settings and the `location`
       background mode capability. Skip the Always key — When In Use plus
       `allowsBackgroundLocationUpdates` covers a run that starts in the app, and Always
       is the scarier prompt for no gain.
-- [ ] Build `LocationManager` (`@Observable`, wraps `CLLocationManager`):
-      request auth, `startUpdatingLocation`, `allowsBackgroundLocationUpdates = true`,
-      `activityType = .fitness`, `distanceFilter` ~5m.
-- [ ] Publish a stream of `CLLocation` into `StopwatchViewModel` — rename it `RunSession`
-      while you're at it. Accumulate `totalDistance` by summing `location.distance(from: previous)`.
-- [ ] Filter junk points: drop anything with `horizontalAccuracy > 20` or a negative value,
+- [x] Put the location loop straight in `RunViewModel` — no separate manager. `CLLocation
+      Update.liveUpdates(.fitness)` is already a clean async sequence (iOS 17+, no
+      delegate, auto-pauses while you stand still, and delivers errors and auth problems
+      in the same stream). A run starting *is* location starting, so the lifecycles
+      already match `start()` / `stop()`. Store the `Task` so `stop()` can cancel it, and
+      a background session so recording survives the screen locking.
+- [x] Accumulate `totalDistance` by summing `location.distance(from: previous)`.
+- [x] Filter junk points: drop anything with `horizontalAccuracy > 20` or a negative value,
       and drop points older than ~5 seconds (`timestamp` check).
-- [ ] Show live distance + current pace on `RecordingView` under the timer, reusing the
-      pace formatting from Phase 2.
+- [ ] Show live distance + current pace on `RecordingView` under the timer.
+- [ ] Handle a run with no route at all — indoor, or no GPS fix. Once stopwatch runs
+      record `RoutePoint`s this becomes the only empty case, but it never goes away.
+      No empty grey thumbnail frame on the card.
 - [ ] Write `RoutePoint`s as you record, into the same model Phase 2 already created.
 - [ ] Populate `distance`, `elevationAscended` and `maxElevation` on app-recorded `Run`s,
       so a stopwatch run and an imported run carry the same shape of data.
@@ -140,7 +140,11 @@ you how far you went and how fast.
 Phase 2's cards are static snapshot images. This is where a real, live, interactive map
 shows up — one on screen at a time, so it can afford to be one.
 
-- [ ] `RunDetailView` — tap a history card, push to a full run breakdown.
+- [ ] `RunDetailView` — tap a history card, push to a full run breakdown. Navigate with
+      `navigationDestination(for: Run.self)`, not `NavigationLink(destination:)` — in a
+      list this long the old pattern builds every detail view up front.
+- [ ] Pace, on the detail screen. Not stored — derive `duration / distance`, format
+      `mm:ss /mi`. Make it a computed property on `Run` so the splits list can reuse it.
 - [ ] Draw the route with `MapPolyline` over the run's `RoutePoint`s.
 - [ ] Auto-frame the map to the route's bounding region.
 - [ ] Start/finish markers (green pin, checkered flag).
