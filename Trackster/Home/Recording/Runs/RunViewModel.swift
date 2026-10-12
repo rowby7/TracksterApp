@@ -14,10 +14,12 @@ class RunViewModel {
     private(set) var startDate: Date?
     private(set) var isRunning = false
     private(set) var totalDistance: Double = 0
+    private(set) var routeLocation: [CLLocation] = []
     
     private var locationTask: Task<Void, Never>?
     private var backgroundSession: CLBackgroundActivitySession?
     private var previousLocation: CLLocation?
+    var showSaveErrorAlert = false
     
     func start() {
                 startDate = Date.now
@@ -37,6 +39,7 @@ class RunViewModel {
                         totalDistance += location.distance(from: previousLocation)
                     }
                     
+                    routeLocation.append(location)
                     previousLocation = location
                     
                     print("String: \(totalDistance)")
@@ -49,12 +52,12 @@ class RunViewModel {
     
 
     
-    func elapsed(at date: Date) -> TimeInterval {
+  private func elapsed(at date: Date) -> TimeInterval {
         guard let startDate else { return 0 }
         return date.timeIntervalSince(startDate)
     }
     
-    func formattedElapsed(at date: Date) -> String {
+   private func formattedElapsed(at date: Date) -> String {
         let interval = elapsed(at: date)
         let minutes = Int(interval) / 60
         let seconds = Int(interval) % 60
@@ -71,9 +74,46 @@ class RunViewModel {
         
         backgroundSession?.invalidate()
         backgroundSession = nil
-        let record = Run(startDate: startDate, endDate: .now, duration: elapsed(at: .now))
+        let record = Run(startDate: startDate, endDate: .now, duration: elapsed(at: .now), distance: totalDistance)
         runContext.insert(record)
+        
+        record.route = routeLocation.map { location in
+            RoutePoint(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude,
+                timestamp: location.timestamp,
+                altitude: location.verticalAccuracy > 0 ? location.altitude : nil
+            )
+        }
+        
+        record.maxElevation = record.route.compactMap(\.altitude).max()
+        record.elevationGain = elevationGain(of: routeLocation)
+        
+        do {
+            try runContext.save()
+        } catch {
+            showSaveErrorAlert = true
+        }
+        
     }
+    
+    
+    private func elevationGain(of locations: [CLLocation]) -> Double {
+        var total = 0.0
+        var previousAltitude: Double? = nil
+        
+        for location in locations {
+            guard location.verticalAccuracy > 0 else { continue }
+            
+            if let previousAltitude, location.altitude > previousAltitude {
+                     total += location.altitude - previousAltitude
+                 }
+            previousAltitude = location.altitude
+        }
+        
+        return total
+    }
+    
     
     func pace(at date: Date) -> TimeInterval {
         

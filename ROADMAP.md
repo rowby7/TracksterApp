@@ -106,11 +106,11 @@ Watch. Take your time here.
 - [x] Filter junk points: drop anything with `horizontalAccuracy > 20` or a negative value,
       and drop points older than ~5 seconds (`timestamp` check).
 - [x] Show live distance + current pace on `RecordingView` under the timer.
-- [ ] Handle a run with no route at all — indoor, or no GPS fix. Once stopwatch runs
+- [x] Handle a run with no route at all — indoor, or no GPS fix. Once stopwatch runs
       record `RoutePoint`s this becomes the only empty case, but it never goes away.
       No empty grey thumbnail frame on the card.
-- [ ] Write `RoutePoint`s as you record, into the same model Phase 2 already created.
-- [ ] Populate `distance`, `elevationAscended` and `maxElevation` on app-recorded `Run`s,
+- [x] Write `RoutePoint`s as you record, into the same model Phase 2 already created.
+- [x] Populate `distance`, `elevationAscended` and `maxElevation` on app-recorded `Run`s,
       so a stopwatch run and an imported run carry the same shape of data.
 
 **Done when:** you can run around the block with no Watch, come back, and the app tells
@@ -120,6 +120,12 @@ you how far you went and how fast.
 
 ## Phase 4 — Make a run feel real (3–4 days)
 
+- [ ] Live map on `ActiveRunView`, Apple Maps / Strava style: a full-screen `Map` behind
+      everything, with the stats in a draggable panel on top. Map: `MapPolyline` over
+      `routeLocations`, `UserAnnotation()` for the blue dot, camera following with
+      `.userLocation(...)`. Panel: `.sheet` with `.presentationDetents` for the snap points,
+      `.presentationBackgroundInteraction(.enabled)` so the map stays touchable, and
+      `.interactiveDismissDisabled()` so a swipe can't close it mid-run.
 - [ ] Pause / resume. Track `accumulatedTime` plus a current `segmentStart` instead of a
       single `startDate`. Pause also pauses location updates.
 - [ ] Crash/kill recovery: write the in-progress run's start time and accumulated time to
@@ -148,7 +154,6 @@ shows up — one on screen at a time, so it can afford to be one.
 - [ ] Draw the route with `MapPolyline` over the run's `RoutePoint`s.
 - [ ] Auto-frame the map to the route's bounding region.
 - [ ] Start/finish markers (green pin, checkered flag).
-- [ ] Live map on `RecordingView` — the trail drawing behind you as you run.
 - [ ] Per-mile splits list on the detail screen.
 
 **Done when:** you finish a run and immediately want to look at the map.

@@ -35,7 +35,10 @@ struct RunCardView: View {
                     .font(.title)
             }
 
-            RouteSnapshotView(points: run.route, id: run.persistentModelID)
+            if !run.route.isEmpty {
+                RouteSnapshotView(points: run.route, id: run.persistentModelID)
+            }
+          
         }
     }
 
