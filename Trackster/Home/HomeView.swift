@@ -17,7 +17,7 @@ struct HomeView: View {
                 }
             }
             .navigationDestination(for: HomeRoute.self) { _ in
-                RecordingView()
+                ActiveRunView()
             }
             .font(.largeTitle)
             .appTitle()

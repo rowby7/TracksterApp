@@ -1,5 +1,5 @@
 //
-//  StopwatchViewModel.swift
+//  RunViewModel.swift
 //  Trackster
 //
 //  Created by Rowby Villanueva on 9/11/26.
@@ -47,6 +47,7 @@ class RunViewModel {
         }
     }
     
+
     
     func elapsed(at date: Date) -> TimeInterval {
         guard let startDate else { return 0 }
@@ -72,6 +73,17 @@ class RunViewModel {
         backgroundSession = nil
         let record = Run(startDate: startDate, endDate: .now, duration: elapsed(at: .now))
         runContext.insert(record)
+    }
+    
+    func pace(at date: Date) -> TimeInterval {
+        
+        guard totalDistance > 0 else { return 0 }
+        
+        let convertedDistance = totalDistance / 1609.344
+        
+        let pace = elapsed(at: date) / convertedDistance
+        
+        return pace
     }
     
     

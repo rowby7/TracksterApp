@@ -105,7 +105,7 @@ Watch. Take your time here.
 - [x] Accumulate `totalDistance` by summing `location.distance(from: previous)`.
 - [x] Filter junk points: drop anything with `horizontalAccuracy > 20` or a negative value,
       and drop points older than ~5 seconds (`timestamp` check).
-- [ ] Show live distance + current pace on `RecordingView` under the timer.
+- [x] Show live distance + current pace on `RecordingView` under the timer.
 - [ ] Handle a run with no route at all — indoor, or no GPS fix. Once stopwatch runs
       record `RoutePoint`s this becomes the only empty case, but it never goes away.
       No empty grey thumbnail frame on the card.

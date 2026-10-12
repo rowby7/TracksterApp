@@ -11,7 +11,7 @@ import CoreLocation
 
 nonisolated final class HealthKitManager {
     private let healthStore = HKHealthStore()
-
+    private let types: [HKWorkoutActivityType] = [.running, .walking]
     func requestAuthorization() async throws {
         let workoutType = HKObjectType.workoutType()
         let routeType = HKSeriesType.workoutRoute()
@@ -19,8 +19,12 @@ nonisolated final class HealthKitManager {
     }
     
     func fetchWorkouts() async throws -> [HKWorkout] {
+        let running = HKQuery.predicateForWorkouts(with: .running)
+        let walking = HKQuery.predicateForWorkouts(with: .walking)
+        let runningOrWalking = NSCompoundPredicate(orPredicateWithSubpredicates: [running, walking])
+
         let descriptor = HKSampleQueryDescriptor(
-            predicates: [.workout()],
+            predicates: [.workout(runningOrWalking)],
             sortDescriptors: [SortDescriptor(\.startDate, order: .reverse)]
         )
         return try await descriptor.result(for: healthStore)
