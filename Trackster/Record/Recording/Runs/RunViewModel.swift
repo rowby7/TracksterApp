@@ -22,8 +22,11 @@ class RunViewModel {
     var showSaveErrorAlert = false
     
     func start() {
-                startDate = Date.now
-                isRunning = true
+        startDate = Date.now
+        isRunning = true
+        totalDistance = 0
+        routeLocation = []
+        previousLocation = nil
         
         backgroundSession = CLBackgroundActivitySession()
         
@@ -57,7 +60,7 @@ class RunViewModel {
         return date.timeIntervalSince(startDate)
     }
     
-   private func formattedElapsed(at date: Date) -> String {
+   func formattedElapsed(at date: Date) -> String {
         let interval = elapsed(at: date)
         let minutes = Int(interval) / 60
         let seconds = Int(interval) % 60
@@ -88,6 +91,7 @@ class RunViewModel {
         
         record.maxElevation = record.route.compactMap(\.altitude).max()
         record.elevationGain = elevationGain(of: routeLocation)
+        self.startDate = nil
         
         do {
             try runContext.save()

@@ -9,23 +9,27 @@ import SwiftUI
 import SwiftData
 
 struct RootTabView: View {
+    
+    @State private var runViewModel = RunViewModel()
     var body: some View {
        
         TabView {
-            Tab("Home", systemImage: "house") {
-                HomeView()
-                   
-            }
             
             Tab("History", systemImage: "figure.run.square.stack.fill") {
                 HistoryView()
             }
+
             
+            Tab("Start", systemImage: "record.circle") {
+                LiveRunMapView()
+            }
+     
             Tab("Profile", systemImage: "person.crop.circle") {
                 ProfileView()
             }
             
         }
+        .environment(runViewModel)
     }
 }
 

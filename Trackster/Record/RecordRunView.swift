@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HomeView: View {
+struct RecordRunView: View {
     var body: some View {
         NavigationStack {
             NavigationLink(value: HomeRoute.recording) {
@@ -28,5 +28,5 @@ struct HomeView: View {
 enum HomeRoute: Hashable { case recording }
 
 #Preview {
-    HomeView()
+    RecordRunView()
 }

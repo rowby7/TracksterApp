@@ -9,9 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct ActiveRunView: View {
-    @State private var viewModel = RunViewModel()
-    
-    @Environment(\.dismiss) private var dismiss
+    @Environment(RunViewModel.self) private var viewModel
     @Environment(\.modelContext) private var runContext
 
     var body: some View {
@@ -22,7 +20,7 @@ struct ActiveRunView: View {
                         .font(.largeTitle.scaled(by: 1.8).bold())
                         .monospacedDigit()
                 }
-
+                
                 Grid {
                     GridRow {
                         Text("Distance")
@@ -32,10 +30,10 @@ struct ActiveRunView: View {
                         Text("")
                     }
                     .font(.subheadline)
-
+                    
                     GridRow {
                         Text(distanceText)
-
+                        
                         TimelineView(.periodic(from: start, by: 1)) { context in
                             Text(paceText(at: context.date))
                         }
@@ -49,17 +47,17 @@ struct ActiveRunView: View {
                     .font(.largeTitle.scaled(by: 1.8).bold())
                     .monospacedDigit()
             }
-
-            Spacer()
-
-            Button("Stop Recording", systemImage: "stop", action: stopRecording)
-                .labelStyle(.iconOnly)
-                .font(.largeTitle.scaled(by: 2))
+            
+            Button(
+                viewModel.isRunning ? "Stop Recording" : "Start",
+                systemImage: viewModel.isRunning ? "stop" : "play",
+                action: toggleRun
+            )
+            .labelStyle(.iconOnly)
+            .font(.largeTitle.scaled(by: 2))
+          
         }
         .padding()
-        .onAppear {
-            viewModel.start()
-        }
         .appTitle()
     }
 
@@ -75,9 +73,12 @@ struct ActiveRunView: View {
         return Duration.seconds(pace).formatted(.time(pattern: .minuteSecond)) + " /mi"
     }
 
-    private func stopRecording() {
-        viewModel.stopAndSave(to: runContext)
-        dismiss()
+    private func toggleRun() {
+        if viewModel.isRunning {
+            viewModel.stopAndSave(to: runContext)
+        } else {
+            viewModel.start()
+        }
     }
 }
 
@@ -85,4 +86,5 @@ struct ActiveRunView: View {
 
 #Preview {
     ActiveRunView()
+        .environment(RunViewModel())
 }
