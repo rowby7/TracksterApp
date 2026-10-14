@@ -15,18 +15,21 @@ class RunViewModel {
     private(set) var isRunning = false
     private(set) var totalDistance: Double = 0
     private(set) var routeLocation: [CLLocation] = []
+    private(set) var accumulatedTime: TimeInterval = 0
+    private(set) var segmentStart: Date? = nil
     
     private var locationTask: Task<Void, Never>?
     private var backgroundSession: CLBackgroundActivitySession?
     private var previousLocation: CLLocation?
+    
     var showSaveErrorAlert = false
+    var isPaused = false
     
     func start() {
         startDate = Date.now
+        segmentStart = .now
         isRunning = true
-        totalDistance = 0
-        routeLocation = []
-        previousLocation = nil
+        reset()
         
         backgroundSession = CLBackgroundActivitySession()
         
@@ -38,9 +41,12 @@ class RunViewModel {
                           location.timestamp.timeIntervalSinceNow >= -5
                             else { continue }
                    
+                    guard segmentStart != nil else { continue }
+                    
                     if let previousLocation {
                         totalDistance += location.distance(from: previousLocation)
                     }
+                    
                     
                     routeLocation.append(location)
                     previousLocation = location
@@ -54,10 +60,27 @@ class RunViewModel {
     }
     
 
+    func pause() {
+        isPaused = true
+        guard let segmentStart else { return }
+        accumulatedTime += Date.now.timeIntervalSince(segmentStart)
+        self.segmentStart = nil
+        previousLocation = nil
+    }
     
-  private func elapsed(at date: Date) -> TimeInterval {
-        guard let startDate else { return 0 }
-        return date.timeIntervalSince(startDate)
+    func resume() {
+        isPaused = false
+        guard segmentStart == nil else { return }
+        segmentStart = .now
+        
+    }
+    
+    
+    private func elapsed(at date: Date) -> TimeInterval {
+        if let segmentStart {
+            return accumulatedTime + date.timeIntervalSince(segmentStart)
+        }
+        return accumulatedTime
     }
     
    func formattedElapsed(at date: Date) -> String {
@@ -99,8 +122,16 @@ class RunViewModel {
             showSaveErrorAlert = true
         }
         
+        reset()
     }
     
+    
+    private func reset() {
+        accumulatedTime = 0
+        totalDistance = 0
+        routeLocation = []
+        previousLocation = nil
+    }
     
     private func elevationGain(of locations: [CLLocation]) -> Double {
         var total = 0.0

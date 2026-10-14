@@ -11,12 +11,18 @@ import CoreLocation
 
 struct LiveRunMapView: View {
     
+    @Environment(RunViewModel.self) private var viewModel
+
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isShowingPanel = false
     @State private var locationSession: CLServiceSession?
     
     var body: some View {
-        Map(position: $position) { UserAnnotation() }
+        Map(position: $position) {
+            UserAnnotation()
+            MapPolyline(coordinates: viewModel.routeLocation.map(\.coordinate))
+                .stroke(.orange, lineWidth: 5)
+        }
             .mapControls {
                 MapUserLocationButton()
             }

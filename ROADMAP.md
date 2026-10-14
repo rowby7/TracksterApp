@@ -120,13 +120,13 @@ you how far you went and how fast.
 
 ## Phase 4 — Make a run feel real (3–4 days)
 
-- [ ] Live map on `ActiveRunView`, Apple Maps / Strava style: a full-screen `Map` behind
+- [x] Live map on `ActiveRunView`, Apple Maps / Strava style: a full-screen `Map` behind
       everything, with the stats in a draggable panel on top. Map: `MapPolyline` over
       `routeLocations`, `UserAnnotation()` for the blue dot, camera following with
       `.userLocation(...)`. Panel: `.sheet` with `.presentationDetents` for the snap points,
       `.presentationBackgroundInteraction(.enabled)` so the map stays touchable, and
       `.interactiveDismissDisabled()` so a swipe can't close it mid-run.
-- [ ] Pause / resume. Track `accumulatedTime` plus a current `segmentStart` instead of a
+- [x] Pause / resume. Track `accumulatedTime` plus a current `segmentStart` instead of a
       single `startDate`. Pause also pauses location updates.
 - [ ] Crash/kill recovery: write the in-progress run's start time and accumulated time to
       `UserDefaults` (or an `isActive` flag on a `Run`) on every tick. On launch, if one
@@ -175,7 +175,7 @@ shows up — one on screen at a time, so it can afford to be one.
 
 ## Phase 7 — Polish & ship (ongoing)
 
-- [ ] Move `SWIFT_VERSION` to 6.0 and fix the concurrency warnings. Run the
+- [x] Move `SWIFT_VERSION` to 6.0 and fix the concurrency warnings. Run the
       `swift-concurrency-pro` and `swiftui-pro` skills over the codebase.
 - [ ] Real tests: `RunSession` pace math, distance accumulation, HealthKit de-duplication.
       The template stubs in `TracksterTests` don't test anything.

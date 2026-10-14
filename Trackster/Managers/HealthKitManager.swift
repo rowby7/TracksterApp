@@ -51,20 +51,11 @@ nonisolated final class HealthKitManager {
 
         guard let route = routes.first else { return [] }
 
-        return try await withCheckedThrowingContinuation { continuation in
-            var all: [CLLocation] = []
-            let query = HKWorkoutRouteQuery(route: route) { _, locations, done, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                all.append(contentsOf: locations ?? [])
-                if done {
-                    continuation.resume(returning: all)
-                }
-            }
-            healthStore.execute(query)
+        var locations: [CLLocation] = []
+        for try await location in HKWorkoutRouteQueryDescriptor(route).results(for: healthStore) {
+            locations.append(location)
         }
+        return locations
     }
 }
 
