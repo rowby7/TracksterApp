@@ -7,7 +7,6 @@
 
 import SwiftUI
 import MapKit
-import CoreLocation
 
 struct LiveRunMapView: View {
     
@@ -15,7 +14,6 @@ struct LiveRunMapView: View {
 
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isShowingPanel = false
-    @State private var locationSession: CLServiceSession?
     
     var body: some View {
         Map(position: $position) {
@@ -46,13 +44,12 @@ struct LiveRunMapView: View {
     }
 
     private func mapAppeared() {
-        locationSession = CLServiceSession(authorization: .whenInUse)
+        viewModel.startPreviewLocation()
         showPanel()
     }
 
     private func mapDisappeared() {
-        locationSession?.invalidate()
-        locationSession = nil
+        viewModel.stopPreviewLocation()
     }
 
     private func showPanel() {

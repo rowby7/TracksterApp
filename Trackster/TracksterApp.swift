@@ -10,6 +10,7 @@ import SwiftData
 
 @main
 struct TracksterApp: App {
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             RoutePoint.self,

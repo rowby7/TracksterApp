@@ -11,6 +11,8 @@ import SwiftData
 struct RootTabView: View {
     
     @State private var runViewModel = RunViewModel()
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some View {
        
         TabView {
@@ -30,6 +32,19 @@ struct RootTabView: View {
             
         }
         .environment(runViewModel)
+        .onChange(of: scenePhase, scenePhaseChanged)
+    }
+
+    // One place for everything that reacts to the app going to and from the background
+    private func scenePhaseChanged(_ oldPhase: ScenePhase, _ newPhase: ScenePhase) {
+        switch newPhase {
+        case .background:
+            runViewModel.suspendPreviewLocation()
+        case .active:
+            runViewModel.resumePreviewLocation()
+        default:
+            break
+        }
     }
 }
 

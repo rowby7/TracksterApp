@@ -21,6 +21,8 @@ class RunViewModel {
     private var locationTask: Task<Void, Never>?
     private var backgroundSession: CLBackgroundActivitySession?
     private var previousLocation: CLLocation?
+    private var previewSession: CLServiceSession?
+    private var wantsPreviewLocation = false
     
     var showSaveErrorAlert = false
     var isPaused = false
@@ -126,6 +128,39 @@ class RunViewModel {
     }
     
     
+    // MARK: - Preview location (the map before and between runs)
+
+    func startPreviewLocation() {
+        wantsPreviewLocation = true
+        openPreviewSession()
+    }
+
+    func stopPreviewLocation() {
+        wantsPreviewLocation = false
+        closePreviewSession()
+    }
+
+    func suspendPreviewLocation() {
+        guard !isRunning else { return }
+        closePreviewSession()
+    }
+
+    func resumePreviewLocation() {
+        guard wantsPreviewLocation else { return }
+        openPreviewSession()
+    }
+
+    private func openPreviewSession() {
+        guard previewSession == nil else { return }
+        // Asks for When In Use permission the first time
+        previewSession = CLServiceSession(authorization: .whenInUse)
+    }
+
+    private func closePreviewSession() {
+        previewSession?.invalidate()
+        previewSession = nil
+    }
+
     private func reset() {
         accumulatedTime = 0
         totalDistance = 0
