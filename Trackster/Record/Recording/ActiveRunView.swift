@@ -20,34 +20,35 @@ struct ActiveRunView: View {
                         .font(.largeTitle.scaled(by: 1.8).bold())
                         .monospacedDigit()
                 }
-                
-                Grid {
-                    GridRow {
-                        Text("Distance")
-                            .frame(maxWidth: .infinity)
-                        Text("Pace")
-                            .frame(maxWidth: .infinity)
-                        Text("")
-                    }
-                    .font(.subheadline)
-                    
-                    GridRow {
-                        Text(distanceText)
-                        
-                        TimelineView(.periodic(from: start, by: 1)) { context in
-                            Text(paceText(at: context.date))
-                        }
-                    }
-                    .font(.title.bold())
-                    .monospacedDigit()
-                }
-                .padding(.vertical)
+            
             } else {
                 Text("00:00:00")
                     .font(.largeTitle.scaled(by: 1.8).bold())
                     .monospacedDigit()
             }
-            
+
+            Grid {
+                GridRow {
+                    Text("Distance")
+                        .frame(maxWidth: .infinity)
+                    Text("Pace")
+                        .frame(maxWidth: .infinity)
+                    Text("")
+                }
+                .font(.subheadline)
+
+                GridRow {
+                    Text(distanceText)
+
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        Text(paceText(at: context.date))
+                    }
+                }
+                .font(.title.bold())
+                .monospacedDigit()
+            }
+            .padding(.vertical)
+
             Button(
                 viewModel.isRunning ? "Stop Recording" : "Start",
                 systemImage: viewModel.isRunning ? "stop" : "play",
@@ -58,7 +59,8 @@ struct ActiveRunView: View {
           
         }
         .padding()
-        .appTitle()
+        .padding(.top, 20)
+
     }
 
     private var distanceText: String {

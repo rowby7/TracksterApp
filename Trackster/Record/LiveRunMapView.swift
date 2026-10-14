@@ -7,12 +7,13 @@
 
 import SwiftUI
 import MapKit
+import CoreLocation
 
 struct LiveRunMapView: View {
     
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isShowingPanel = false
-    @ScaledMetric private var panelHeight = 250.0
+    @State private var locationSession: CLServiceSession?
     
     var body: some View {
         Map(position: $position) { UserAnnotation() }
@@ -30,11 +31,22 @@ struct LiveRunMapView: View {
             }
             .sheet(isPresented: $isShowingPanel) {
                 ActiveRunView()
-                    .presentationDetents([.height(panelHeight)])
+                    .presentationDetents([.fraction(1 / 3)])
                     .presentationBackgroundInteraction(.enabled)
                     .presentationDragIndicator(.visible)
             }
-            .onAppear(perform: showPanel)
+            .onAppear(perform: mapAppeared)
+            .onDisappear(perform: mapDisappeared)
+    }
+
+    private func mapAppeared() {
+        locationSession = CLServiceSession(authorization: .whenInUse)
+        showPanel()
+    }
+
+    private func mapDisappeared() {
+        locationSession?.invalidate()
+        locationSession = nil
     }
 
     private func showPanel() {
