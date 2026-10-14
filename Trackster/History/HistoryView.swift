@@ -42,6 +42,7 @@ struct HistoryView: View {
                     .scrollIndicators(.hidden)
                 }
             }
+            .background(Color(.pageBackground))
             .appTitle("Run History")
             .task {
                 await viewModel.importWorkouts(container: runContext.container)

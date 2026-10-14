@@ -27,6 +27,7 @@ struct TracksterApp: App {
     var body: some Scene {
         WindowGroup {
             RootTabView()
+                .preferredColorScheme(.light)
         }
         .modelContainer(sharedModelContainer)
     }

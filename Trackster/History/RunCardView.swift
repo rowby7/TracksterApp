@@ -18,28 +18,30 @@ struct RunCardView: View {
                     Text(run.startDate, format: .dateTime.day().month().year())
                         .font(.subheadline)
                         .opacity(0.6)
-
+                    
                     HStack(spacing: 20) {
                         StatColumnView(title: "Distance", value: distanceText)
                         StatColumnView(title: "Avg. BPM", value: bpmText)
                         StatColumnView(title: "Elevation Gain", value: elevationGainText)
                     }
-
+                    
                     Text(Duration.seconds(run.duration), format: .time(pattern: .minuteSecond))
                         .font(.largeTitle.bold())
                 }
-
+                
                 Spacer()
-
+                
                 Image(systemName: "figure.run")
                     .font(.title)
             }
-
+            
             if !run.route.isEmpty {
                 RouteSnapshotView(points: run.route, id: run.persistentModelID)
             }
-          
+            
         }
+        .padding()
+        .background(Color(.cardBackground), in: .rect(cornerRadius: 20))
     }
 
     private var distanceText: String {
