@@ -188,9 +188,37 @@ shows up — one on screen at a time, so it can afford to be one.
 
 ---
 
+## Phase 8 — Apple Watch (big — start only after Phase 7)
+
+Strava's model: start a run on the phone, the Watch does the recording with its own
+sensors, and the phone mirrors it live. Heart rate, plus the Watch's GPS.
+
+- [ ] iPhone workout session first. iOS 26 brought `HKWorkoutSession` +
+      `HKLiveWorkoutBuilder` to the iPhone — the same API the Watch uses, so it's a
+      practice run. Runs get saved to Apple Health as real workouts (needs share
+      permission, not just read).
+- [ ] Add a watchOS app target. Share the code both apps need (`Run`, formatting).
+- [ ] The Watch runs the workout: `HKWorkoutSession` + `HKLiveWorkoutBuilder` for live
+      heart rate, distance and calories; `HKWorkoutRouteBuilder` for the Watch's GPS route.
+- [ ] Start it from the phone: `healthStore.startWatchApp(toHandle:)` with an
+      `HKWorkoutConfiguration` wakes the Watch app and hands it the run.
+- [ ] Mirror it to the phone: the Watch calls `startMirroringToCompanionDevice()`; the
+      phone picks it up in `workoutSessionMirroringStartHandler` and shows the live stats
+      in `ActiveRunView`.
+- [ ] No Watch connected → fall back to the phone's own GPS recording.
+- [ ] No duplicates: a Watch-recorded run also lands in Apple Health, so make sure the
+      HealthKit import doesn't add it a second time.
+
+**Done when:** you start a run on your phone, it records on your wrist, and both screens
+show the same heart rate.
+
+---
+
 ## Parked (decide later, don't build yet)
 
-- watchOS companion app — big lift, changes the architecture. Worth it, but not before Phase 6.
+- Record the run on a camera (Insta360 or similar) — start/stop it from the app and line the
+  footage up with the route. Check the camera maker's official SDK first rather than
+  reverse-engineering its Bluetooth protocol.
 - Goals & training plans
 - Social / sharing a run
 - Audio cues mid-run ("mile 2, 8:47 pace")
