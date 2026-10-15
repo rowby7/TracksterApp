@@ -21,26 +21,26 @@ struct LiveRunMapView: View {
             MapPolyline(coordinates: viewModel.routeLocation.map(\.coordinate))
                 .stroke(.orange, lineWidth: 5)
         }
-            .mapControls {
-                MapUserLocationButton()
+        .mapControls {
+            MapUserLocationButton()
+        }
+        .overlay(alignment: .bottomLeading) {
+            if !isShowingPanel {
+                Button("Show Run Panel", systemImage: "chevron.up", action: showPanel)
+                    .labelStyle(.iconOnly)
+                    .buttonStyle(.glass)
+                    .controlSize(.large)
+                    .padding()
             }
-            .overlay(alignment: .bottomLeading) {
-                if !isShowingPanel {
-                    Button("Show Run Panel", systemImage: "chevron.up", action: showPanel)
-                        .labelStyle(.iconOnly)
-                        .buttonStyle(.glass)
-                        .controlSize(.large)
-                        .padding()
-                }
-            }
-            .sheet(isPresented: $isShowingPanel) {
-                ActiveRunView()
-                    .presentationDetents([.fraction(1 / 3)])
-                    .presentationBackgroundInteraction(.enabled)
-                    .presentationDragIndicator(.visible)
-            }
-            .onAppear(perform: mapAppeared)
-            .onDisappear(perform: mapDisappeared)
+        }
+        .sheet(isPresented: $isShowingPanel) {
+            ActiveRunView()
+                .presentationDetents([.fraction(1 / 3)])
+                .presentationBackgroundInteraction(.enabled)
+                .presentationDragIndicator(.visible)
+        }
+        .onAppear(perform: mapAppeared)
+        .onDisappear(perform: mapDisappeared)
     }
 
     private func mapAppeared() {

@@ -43,7 +43,9 @@ struct HistoryView: View {
                 }
             }
             .background(Color(.pageBackground))
-            .appTitle("Run History")
+            .navigationTitle("Run History")
+            .navigationSubtitle("Keep Running")
+            
             .task {
                 await viewModel.importWorkouts(container: runContext.container)
             }
@@ -58,7 +60,7 @@ struct HistoryView: View {
             } message: {
                 Text(viewModel.importErrorMessage)
             }
-          
+            
         }
       
        
