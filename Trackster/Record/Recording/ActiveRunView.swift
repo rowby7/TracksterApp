@@ -35,7 +35,6 @@ struct ActiveRunView: View {
                         .frame(maxWidth: .infinity)
                     Text("Pace")
                         .frame(maxWidth: .infinity)
-                    Text("")
                 }
                 .font(.subheadline)
 
