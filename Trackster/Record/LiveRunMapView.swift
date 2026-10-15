@@ -14,6 +14,7 @@ struct LiveRunMapView: View {
 
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isShowingPanel = false
+    @ScaledMetric private var countdownSize = 220.0
     
     var body: some View {
         Map(position: $position) {
@@ -24,6 +25,18 @@ struct LiveRunMapView: View {
         .mapControls {
             MapUserLocationButton()
         }
+        .overlay{
+            if let countdown = viewModel.countdown {
+                Text(countdown, format: .number)
+                    .font(.largeTitle.scaled(by: 5).bold())
+                    .monospacedDigit()
+                    .frame(width: countdownSize, height: countdownSize)
+                    .glassEffect(.regular.tint(.green.opacity(Double(countdown) * 0.3 - 0.1)), in: .circle)
+                    .contentTransition(.numericText(countsDown: true))
+                    .allowsHitTesting(false)
+                    .accessibilityLabel("Starting in \(countdown)")
+            }
+        }
         .overlay(alignment: .bottomLeading) {
             if !isShowingPanel {
                 Button("Show Run Panel", systemImage: "chevron.up", action: showPanel)
@@ -33,6 +46,7 @@ struct LiveRunMapView: View {
                     .padding()
             }
         }
+       
         .sheet(isPresented: $isShowingPanel) {
             ActiveRunView()
                 .presentationDetents([.fraction(1 / 3)])

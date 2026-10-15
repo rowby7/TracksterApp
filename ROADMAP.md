@@ -128,7 +128,7 @@ you how far you went and how fast.
       `.interactiveDismissDisabled()` so a swipe can't close it mid-run.
 - [x] Pause / resume. Track `accumulatedTime` plus a current `segmentStart` instead of a
       single `startDate`. Pause also pauses location updates.
-- [ ] Crash/kill recovery: write the in-progress run's start time and accumulated time to
+- [x] Crash/kill recovery: write the in-progress run's start time and accumulated time to
       `UserDefaults` (or an `isActive` flag on a `Run`) on every tick. On launch, if one
       exists, offer "Resume run in progress?"
 - [ ] Countdown before the run starts — 3 · 2 · 1 · GO. Small thing, feels enormous.

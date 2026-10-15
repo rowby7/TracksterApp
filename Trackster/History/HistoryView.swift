@@ -11,7 +11,11 @@ import SwiftData
 
 struct HistoryView: View {
     
-    @Query(sort: \Run.startDate, order: .reverse) private var runs: [Run]
+    @Query(
+        filter: #Predicate<Run> { run in !run.isActive},
+        sort: \Run.startDate,
+        order: .reverse
+    ) private var runs: [Run]
     @State private var viewModel = HistoryViewModel()
     @Environment(\.modelContext) private var runContext
     

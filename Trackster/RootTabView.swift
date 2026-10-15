@@ -12,6 +12,7 @@ struct RootTabView: View {
     
     @State private var runViewModel = RunViewModel()
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var runContext
 
     var body: some View {
        
@@ -32,6 +33,9 @@ struct RootTabView: View {
             
         }
         .environment(runViewModel)
+        .task {
+            runViewModel.restoreActiveRun(in: runContext)
+        }
         .onChange(of: scenePhase, scenePhaseChanged)
     }
 
@@ -50,5 +54,5 @@ struct RootTabView: View {
 
 #Preview {
     RootTabView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: [Run.self, RoutePoint.self], inMemory: true)
 }

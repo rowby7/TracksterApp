@@ -20,6 +20,7 @@ nonisolated final class Run {
     var activeEnergy:       Double?
     var elevationGain:      Double?
     var maxElevation:       Double?
+    var isActive =          false
     var healthKitID:        UUID?   // nil = recorded in-app, set = imported from HealthKit
 
     @Relationship(deleteRule: .cascade, inverse: \RoutePoint.run)

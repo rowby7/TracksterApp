@@ -59,8 +59,8 @@ struct ActiveRunView: View {
                     }
 
                     Button(
-                        viewModel.isRunning ? "Stop Recording" : "Start",
-                        systemImage: viewModel.isRunning ? "stop.fill" : "play.fill",
+                        mainButtonTitle,
+                        systemImage: mainButtonIcon,
                         action: toggleRun
                     )
                     .labelStyle(.iconOnly)
@@ -120,11 +120,27 @@ struct ActiveRunView: View {
         }
     }
 
+    private var mainButtonTitle: String {
+        switch viewModel.phase {
+        case .idle: "Start"
+        case .countingDown: "Cancel Countdown"
+        case .running, .paused: "Stop Recording"
+        }
+    }
+
+    private var mainButtonIcon: String {
+        switch viewModel.phase {
+        case .idle: "play.fill"
+        case .countingDown: "xmark"
+        case .running, .paused: "stop.fill"
+        }
+    }
+
     private func toggleRun() {
-        if viewModel.isRunning {
-            viewModel.stopAndSave(to: runContext)
-        } else {
-            viewModel.start()
+        switch viewModel.phase {
+        case .idle: viewModel.startCountdown(in: runContext)
+        case .countingDown: viewModel.cancelCountdown()
+        case .running, .paused: viewModel.stopAndSave(to: runContext)
         }
     }
 }
