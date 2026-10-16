@@ -70,6 +70,8 @@ struct ActiveRunView: View {
                     .controlSize(.extraLarge)
                     .tint(.orange)
                     .glassEffectID("main", in: buttonNamespace)
+                    // Only wait for GPS before a run; Stop and Cancel must always work
+                    .disabled(viewModel.phase == .idle && !viewModel.isGPSReady)
 
                     
                     if viewModel.isRunning {

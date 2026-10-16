@@ -131,11 +131,8 @@ you how far you went and how fast.
 - [x] Crash/kill recovery: write the in-progress run's start time and accumulated time to
       `UserDefaults` (or an `isActive` flag on a `Run`) on every tick. On launch, if one
       exists, offer "Resume run in progress?"
-- [ ] Countdown before the run starts — 3 · 2 · 1 · GO. Small thing, feels enormous.
-- [ ] Haptics on start, pause, and stop (`UIImpactFeedbackGenerator` / `.sensoryFeedback`).
-- [ ] Keep the screen awake while recording (`UIApplication.shared.isIdleTimerDisabled`).
-- [ ] Confirmation before discarding a run — right now Stop saves unconditionally.
-      Offer Save / Discard.
+- [x] Countdown before the run starts — 3 · 2 · 1 · GO. Small thing, feels enormous.
+- [x] Haptics on start, pause, and stop (`UIImpactFeedbackGenerator` / `.sensoryFeedback`).
 
 **Done when:** you'd trust it with a real run and not worry about losing it.
 

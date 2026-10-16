@@ -14,6 +14,7 @@ struct LiveRunMapView: View {
 
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isShowingPanel = false
+    @State private var isShowingGPSMessage = false
     @ScaledMetric private var countdownSize = 220.0
     
     var body: some View {
@@ -24,6 +25,15 @@ struct LiveRunMapView: View {
         }
         .mapControls {
             MapUserLocationButton()
+        }
+        .overlay {
+            if isShowingGPSMessage {
+                Text(viewModel.isGPSReady ? "GPS acquired" : "Acquiring GPS...")
+                    .font(.largeTitle.bold())
+                    .padding()
+                    .foregroundStyle(.white)
+                    .background(viewModel.isGPSReady ? .green : .red, in: .rect(cornerRadius: 12))
+            }
         }
         .overlay{
             if let countdown = viewModel.countdown {
@@ -46,12 +56,29 @@ struct LiveRunMapView: View {
                     .padding()
             }
         }
-       
         .sheet(isPresented: $isShowingPanel) {
             ActiveRunView()
                 .presentationDetents([.fraction(1 / 3)])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationDragIndicator(.visible)
+        }
+        .sensoryFeedback(trigger: viewModel.countdown){ _, newNumber in
+            switch newNumber {
+            case 3: .impact(flexibility: .solid, intensity: 0.4)
+            case 2: .impact(flexibility: .solid, intensity: 0.7)
+            case 1: .impact(flexibility: .solid, intensity: 1.0)
+             default: nil
+            }
+            
+        }
+        .task(id: viewModel.isGPSReady) {
+            guard viewModel.isGPSReady else {
+                isShowingGPSMessage = true
+                return
+            }
+            try? await Task.sleep(for: .seconds(1.2))
+            isShowingGPSMessage = false
+
         }
         .onAppear(perform: mapAppeared)
         .onDisappear(perform: mapDisappeared)

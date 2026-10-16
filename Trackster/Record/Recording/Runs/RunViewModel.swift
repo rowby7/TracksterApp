@@ -21,6 +21,8 @@ class RunViewModel {
     private(set) var accumulatedTime: TimeInterval = 0
     private(set) var segmentStart: Date? = nil
     private(set) var countdown: Int?
+    private(set) var isGPSReady: Bool = false
+
 
     var showSaveErrorAlert = false
     var isPaused: Bool { isRunning && segmentStart == nil }
@@ -39,6 +41,7 @@ class RunViewModel {
     private var backgroundSession: CLBackgroundActivitySession?
     private var previousLocation: CLLocation?
     private var previewSession: CLServiceSession?
+    private var previewTask: Task<Void, Never>?
     private var activeRun: Run?
     private var runContext: ModelContext?
     private var wantsPreviewLocation = false
@@ -144,13 +147,14 @@ class RunViewModel {
         locationTask = Task {
             do {
                 for try await update in CLLocationUpdate.liveUpdates(.fitness) {
-                    guard let location = update.location,
-                          (0...20).contains(location.horizontalAccuracy),
+                    guard let location = update.location else { continue }
+
+                    isGPSReady = (0...20).contains(location.horizontalAccuracy)
+
+                    guard (0...20).contains(location.horizontalAccuracy),
                           location.timestamp.timeIntervalSinceNow >= -5
-                            else { continue }
-
-                    guard segmentStart != nil else { continue }
-
+                    else { continue }
+                    
                     if let previousLocation {
                         totalDistance += location.distance(from: previousLocation)
                     }
@@ -286,11 +290,28 @@ class RunViewModel {
         guard previewSession == nil else { return }
         // Asks for When In Use permission the first time
         previewSession = CLServiceSession(authorization: .whenInUse)
+
+        // Watches signal quality while the map is up, so Start can wait for a good fix
+        previewTask = Task {
+            do {
+                for try await update in CLLocationUpdate.liveUpdates(.fitness) {
+                    guard let location = update.location else { continue }
+                    isGPSReady = (0...20).contains(location.horizontalAccuracy)
+                }
+            } catch {}
+        }
     }
 
     private func closePreviewSession() {
+        previewTask?.cancel()
+        previewTask = nil
         previewSession?.invalidate()
         previewSession = nil
+
+        // Nothing is checking the signal now, so don't claim it's still good
+        if !isRunning {
+            isGPSReady = false
+        }
     }
 
     // MARK: - Crash recovery
