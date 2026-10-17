@@ -1,5 +1,5 @@
 //
-//  ActiveRunView.swift
+//  RunPanelView.swift
 //  Trackster
 //
 //  Created by Rowby Villanueva on 9/11/26.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ActiveRunView: View {
+struct RunPanelView: View {
     @Environment(RunViewModel.self) private var viewModel
     @Environment(\.modelContext) private var runContext
     @Namespace private var buttonNamespace
@@ -70,6 +70,8 @@ struct ActiveRunView: View {
                     .controlSize(.extraLarge)
                     .tint(.orange)
                     .glassEffectID("main", in: buttonNamespace)
+                    // A stable name for UI tests; the visible label changes with the phase
+                    .accessibilityIdentifier("mainRunButton")
                     // Only wait for GPS before a run; Stop and Cancel must always work
                     .disabled(viewModel.phase == .idle && !viewModel.isGPSReady)
 
@@ -150,6 +152,6 @@ struct ActiveRunView: View {
 
 
 #Preview {
-    ActiveRunView()
+    RunPanelView()
         .environment(RunViewModel())
 }

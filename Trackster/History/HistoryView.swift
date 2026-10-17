@@ -32,14 +32,17 @@ struct HistoryView: View {
                     ScrollView {
                         LazyVStack {
                             ForEach(runs) { run in
-                                RunCardView(run: run)
-                                    .padding()
-                                    .contentShape(.rect)
-                                    .contextMenu {
-                                        Button("Delete", systemImage: "trash", role: .destructive) {
-                                            deleteRun(run)
+                                NavigationLink(value: run) {
+                                    RunCardView(run: run)
+                                        .padding()
+                                        .contentShape(.rect)
+                                        .contextMenu {
+                                            Button("Delete", systemImage: "trash", role: .destructive) {
+                                                deleteRun(run)
+                                            }
                                         }
-                                    }
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -49,7 +52,10 @@ struct HistoryView: View {
             .background(Color(.pageBackground))
             .navigationTitle("Run History")
             .navigationSubtitle("Keep Running")
-            
+            .navigationDestination(for: Run.self) { run in
+                RunDetailView()
+    
+            }
             .task {
                 await viewModel.importWorkouts(container: runContext.container)
             }

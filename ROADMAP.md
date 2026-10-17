@@ -120,7 +120,7 @@ you how far you went and how fast.
 
 ## Phase 4 — Make a run feel real (3–4 days)
 
-- [x] Live map on `ActiveRunView`, Apple Maps / Strava style: a full-screen `Map` behind
+- [x] Live map on `RunPanelView`, Apple Maps / Strava style: a full-screen `Map` behind
       everything, with the stats in a draggable panel on top. Map: `MapPolyline` over
       `routeLocations`, `UserAnnotation()` for the blue dot, camera following with
       `.userLocation(...)`. Panel: `.sheet` with `.presentationDetents` for the snap points,
@@ -201,7 +201,7 @@ sensors, and the phone mirrors it live. Heart rate, plus the Watch's GPS.
       `HKWorkoutConfiguration` wakes the Watch app and hands it the run.
 - [ ] Mirror it to the phone: the Watch calls `startMirroringToCompanionDevice()`; the
       phone picks it up in `workoutSessionMirroringStartHandler` and shows the live stats
-      in `ActiveRunView`.
+      in `RunPanelView`.
 - [ ] No Watch connected → fall back to the phone's own GPS recording.
 - [ ] No duplicates: a Watch-recorded run also lands in Apple Health, so make sure the
       HealthKit import doesn't add it a second time.

@@ -337,7 +337,7 @@ class RunViewModel {
         previousLocation = nil
     }
 
-    private func elevationGain(of locations: [CLLocation]) -> Double {
+    func elevationGain(of locations: [CLLocation]) -> Double {
         let threshold = 5.0
         var total = 0.0
         var anchorAltitude: Double? = nil

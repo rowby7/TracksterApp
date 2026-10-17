@@ -24,7 +24,7 @@ struct RootTabView: View {
 
             
             Tab("Start", systemImage: "record.circle") {
-                LiveRunMapView()
+                RunMapView()
             }
      
             Tab("Profile", systemImage: "person.crop.circle") {

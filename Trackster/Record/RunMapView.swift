@@ -1,5 +1,5 @@
 //
-//  LiveRunMapView.swift
+//  RunMapView.swift
 //  Trackster
 //
 //  Created by Rowby Villanueva on 10/13/26.
@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 
-struct LiveRunMapView: View {
+struct RunMapView: View {
     
     @Environment(RunViewModel.self) private var viewModel
 
@@ -57,7 +57,7 @@ struct LiveRunMapView: View {
             }
         }
         .sheet(isPresented: $isShowingPanel) {
-            ActiveRunView()
+            RunPanelView()
                 .presentationDetents([.fraction(1 / 3)])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationDragIndicator(.visible)
@@ -99,6 +99,6 @@ struct LiveRunMapView: View {
 }
 
 #Preview {
-    LiveRunMapView()
+    RunMapView()
         .environment(RunViewModel())
 }
