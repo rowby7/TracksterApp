@@ -53,8 +53,7 @@ struct HistoryView: View {
             .navigationTitle("Run History")
             .navigationSubtitle("Keep Running")
             .navigationDestination(for: Run.self) { run in
-                RunDetailView()
-    
+                RunDetailView(run: run)
             }
             .task {
                 await viewModel.importWorkouts(container: runContext.container)

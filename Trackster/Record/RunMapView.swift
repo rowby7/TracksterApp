@@ -15,6 +15,7 @@ struct RunMapView: View {
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isShowingPanel = false
     @State private var isShowingGPSMessage = false
+    @State private var panelHeight: CGFloat = 250
     @ScaledMetric private var countdownSize = 220.0
     
     var body: some View {
@@ -58,7 +59,13 @@ struct RunMapView: View {
         }
         .sheet(isPresented: $isShowingPanel) {
             RunPanelView()
-                .presentationDetents([.fraction(1 / 3)])
+                .fixedSize(horizontal: false, vertical: true)
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.height
+                } action: { newHeight in
+                    panelHeight = newHeight
+                }
+                .presentationDetents([.height(panelHeight)])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationDragIndicator(.visible)
         }

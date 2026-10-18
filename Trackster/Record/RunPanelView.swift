@@ -87,7 +87,6 @@ struct RunPanelView: View {
         }
         .padding()
         .padding(.top, 20)
-
     }
 
     private var distanceText: String {
@@ -154,4 +153,5 @@ struct RunPanelView: View {
 #Preview {
     RunPanelView()
         .environment(RunViewModel())
+        .modelContainer(for: [Run.self, RoutePoint.self], inMemory: true)
 }

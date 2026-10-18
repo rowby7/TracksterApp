@@ -10,6 +10,7 @@ import MapKit
 
 struct RunDetailView: View {
     
+    let run: Run
     @State private var isShowingPanel = true
     @State private var sheetHeight: PresentationDetent = .fraction(2 / 3)
     
@@ -19,7 +20,7 @@ struct RunDetailView: View {
         }
         .ignoresSafeArea()
         .sheet(isPresented: $isShowingPanel) {
-            RunDetailsSheet()
+            RunDetailsSheet(run: run)
                 .presentationDetents(
                     [.fraction(1 / 4), .fraction(2 / 3), .large],
                     selection: $sheetHeight
@@ -29,11 +30,13 @@ struct RunDetailView: View {
 }
 
 struct RunDetailsSheet: View {
+    let run: Run
+
     var body: some View {
         
     }
 }
 
 #Preview {
-    RunDetailView()
+    RunDetailView(run: Run(startDate: .now, endDate: .now, duration: 1834, distance: 3169))
 }

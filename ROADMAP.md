@@ -143,7 +143,7 @@ you how far you went and how fast.
 Phase 2's cards are static snapshot images. This is where a real, live, interactive map
 shows up — one on screen at a time, so it can afford to be one.
 
-- [ ] `RunDetailView` — tap a history card, push to a full run breakdown. Navigate with
+- [x] `RunDetailView` — tap a history card, push to a full run breakdown. Navigate with
       `navigationDestination(for: Run.self)`, not `NavigationLink(destination:)` — in a
       list this long the old pattern builds every detail view up front.
 - [ ] Pace, on the detail screen. Not stored — derive `duration / distance`, format

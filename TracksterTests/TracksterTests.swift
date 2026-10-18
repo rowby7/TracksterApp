@@ -76,7 +76,51 @@ struct TracksterTests {
         #expect(gain == 10)
     }
 
+    // MARK: - Splits
+
+    @Test func steadyRunSplitsIntoEvenMiles() {
+        // 3.5 km due north at a steady 100 m every 30 s
+        let points = straightRoute(meters: 3500, metersPerPoint: 100, secondsPerPoint: 30)
+
+        let splits = Split.perMile(from: points)
+
+        #expect(splits.count == 3)                     // 2 full miles + a leftover
+        let fullMileSeconds = Split.metersPerMile / 100 * 30
+        #expect(abs(splits[0].duration - fullMileSeconds) < 2)
+        #expect(abs(splits[1].duration - fullMileSeconds) < 2)
+        #expect(abs(splits[2].distance - (3500 - 2 * Split.metersPerMile)) < 5)
+        // Same speed throughout, so the short last split's pace matches the full miles
+        #expect(abs(splits[2].pace - splits[0].pace) < 2)
+    }
+
+    @Test func pointsOutOfOrderGiveTheSameSplits() {
+        let points = straightRoute(meters: 2000, metersPerPoint: 100, secondsPerPoint: 30)
+
+        // SwiftData hands relationships back unordered, so the calculation must sort first
+        let splits = Split.perMile(from: points.shuffled())
+
+        #expect(splits == Split.perMile(from: points))
+    }
+
+    @Test func noRouteMeansNoSplits() {
+        #expect(Split.perMile(from: []).isEmpty)
+    }
+
     // MARK: - Helpers
+
+    /// A straight line north, one point every `metersPerPoint`, timed evenly
+    private func straightRoute(meters: Double, metersPerPoint: Double, secondsPerPoint: Double) -> [RoutePoint] {
+        let start = Date.now
+        let degreesPerMeter = 1 / 111_000.0
+        return stride(from: 0.0, through: meters, by: metersPerPoint).enumerated().map { index, distance in
+            RoutePoint(
+                latitude: 40 + distance * degreesPerMeter,
+                longitude: -74,
+                timestamp: start.addingTimeInterval(Double(index) * secondsPerPoint)
+            )
+        }
+    }
+
 
     private func location(altitude: Double, verticalAccuracy: Double = 3) -> CLLocation {
         CLLocation(
