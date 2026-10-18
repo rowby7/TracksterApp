@@ -10,7 +10,7 @@ import SwiftUI
 struct RunDetailPanelView: View {
     let run: Run
     var body: some View {
-        VStack {
+        ScrollView {
             Grid (verticalSpacing: 30){
         
                 GridRow {
@@ -38,6 +38,7 @@ struct RunDetailPanelView: View {
             
         }
         .padding()
+        .padding(.top)
         
     }
 }
@@ -49,10 +50,10 @@ struct RunDetailStatView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.subheadline)
+                .font(.title2)
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(.title.bold())
+                .font(.largeTitle.bold())
                 .monospacedDigit()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
