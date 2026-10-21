@@ -146,7 +146,7 @@ shows up — one on screen at a time, so it can afford to be one.
 - [x] `RunDetailView` — tap a history card, push to a full run breakdown. Navigate with
       `navigationDestination(for: Run.self)`, not `NavigationLink(destination:)` — in a
       list this long the old pattern builds every detail view up front.
-- [ ] Pace, on the detail screen. Not stored — derive `duration / distance`, format
+- [x] Pace, on the detail screen. Not stored — derive `duration / distance`, format
       `mm:ss /mi`. Make it a computed property on `Run` so the splits list can reuse it.
 - [ ] Draw the route with `MapPolyline` over the run's `RoutePoint`s.
 - [ ] Auto-frame the map to the route's bounding region.

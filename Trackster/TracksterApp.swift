@@ -16,6 +16,16 @@ struct TracksterApp: App {
             RoutePoint.self,
             Run.self
         ])
+        #if DEBUG
+        // Screenshot mode: a throwaway database of sample runs, so real data is never touched
+        if MockData.isEnabled {
+            let mockConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            let container = try! ModelContainer(for: schema, configurations: [mockConfiguration])
+            MockData.seed(into: container.mainContext)
+            return container
+        }
+        #endif
+
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {

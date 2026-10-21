@@ -20,6 +20,11 @@ class HistoryViewModel {
     
     
     func importWorkouts(container: ModelContainer) async {
+        #if DEBUG
+        // Screenshot mode uses sample runs only, so don't ask for Health access or import
+        if MockData.isEnabled { return }
+        #endif
+
         isImporting = true
         defer { isImporting = false }
         do {

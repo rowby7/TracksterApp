@@ -34,6 +34,11 @@ struct RunDetailPanelView: View {
                     RunDetailStatView(title: "Active Energy", value: run.activeEnergyText)
                 }
                 
+                GridRow {
+                    RunDetailStatView(title: "Avg. Speed", value: run.speedText)
+
+                }
+                
             }
             
         }

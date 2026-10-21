@@ -30,6 +30,15 @@ extension Run {
         return Duration.seconds(secondsPerMile).formatted(.time(pattern: .minuteSecond)) + " /mi"
     }
 
+    /// Average speed over the whole run, in miles per hour
+    var speedText: String {
+        guard let distance, distance > 0, duration > 0 else { return "--" }
+        return Measurement(value: distance / duration, unit: UnitSpeed.metersPerSecond)
+            .converted(to: .milesPerHour)
+            .formatted(.measurement(width: .abbreviated, usage: .asProvided,
+                                    numberFormatStyle: .number.precision(.fractionLength(1))))
+    }
+
     var averageHeartRateText: String {
         guard let averageHeartRate else { return "--" }
         return "\(Int(averageHeartRate.rounded())) bpm"
