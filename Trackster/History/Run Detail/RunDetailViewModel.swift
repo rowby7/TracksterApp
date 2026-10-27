@@ -13,11 +13,13 @@ import CoreLocation
 class RunDetailViewModel {
     let run: Run
     private(set) var coordinates: [CLLocationCoordinate2D] = []
-    /// How far along the route the drawing has reached, as a point index with a decimal part.
-    /// 142.6 means points 0–142 are drawn, plus a tip 60% of the way from point 142 to 143.
     private(set) var drawnPosition: Double = 0
+    private(set) var splits: [Split] = []
 
-    /// The part of the route drawn so far, ending in a tip that can sit between two real points
+    var isDrawingFinished: Bool {
+        !coordinates.isEmpty && drawnPosition >= Double(coordinates.count - 1)
+    }
+    
     var visibleCoordinates: [CLLocationCoordinate2D] {
         guard !coordinates.isEmpty else { return [] }
 
@@ -37,9 +39,23 @@ class RunDetailViewModel {
         return visible
     }
 
-    /// The tip of the line, where the runner dot sits
+    /// The tip of the line, where the runner dot sits. Worked out directly rather than through
+    /// visibleCoordinates, because this runs every frame and that builds a whole array.
     var runnerCoordinate: CLLocationCoordinate2D? {
-        visibleCoordinates.last
+        guard !coordinates.isEmpty else { return nil }
+
+        let lastFullPoint = min(Int(drawnPosition), coordinates.count - 1)
+        let fraction = drawnPosition - Double(lastFullPoint)
+        guard fraction > 0, lastFullPoint + 1 < coordinates.count else {
+            return coordinates[lastFullPoint]
+        }
+
+        let from = coordinates[lastFullPoint]
+        let to = coordinates[lastFullPoint + 1]
+        return CLLocationCoordinate2D(
+            latitude: from.latitude + (to.latitude - from.latitude) * fraction,
+            longitude: from.longitude + (to.longitude - from.longitude) * fraction
+        )
     }
 
     init(run: Run) {
@@ -52,6 +68,8 @@ class RunDetailViewModel {
             .map { point in
                 CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude)
             }
+        // Splits walk the whole route too, so work them out once here instead of in a view's body
+        splits = run.splits
     }
 
     /// Reveals the route a little at a time so it looks drawn in, taking `duration` seconds

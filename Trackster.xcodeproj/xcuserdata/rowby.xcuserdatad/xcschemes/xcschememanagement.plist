@@ -4,10 +4,58 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Trackster Watch Watch App.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 		<key>Trackster.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>TracksterWidgetExtension.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>8969C812308BF5CD00A44BE4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8969C830308BFB4F00A44BE4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8969C83C308BFB5000A44BE4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8969C846308BFB5000A44BE4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>896B42D93053AE3000046384</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>896B42E83053AE3100046384</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>896B42F23053AE3100046384</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

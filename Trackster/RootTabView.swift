@@ -27,9 +27,10 @@ struct RootTabView: View {
                 RunMapView()
             }
      
-            Tab("Profile", systemImage: "person.crop.circle") {
-                ProfileView()
-            }
+            //TODO: make a profile view once there is login
+//            Tab("Profile", systemImage: "person.crop.circle") {
+//                ProfileView()
+//            }
             
         }
         .environment(runViewModel)
@@ -39,7 +40,6 @@ struct RootTabView: View {
         .onChange(of: scenePhase, scenePhaseChanged)
     }
 
-    // One place for everything that reacts to the app going to and from the background
     private func scenePhaseChanged(_ oldPhase: ScenePhase, _ newPhase: ScenePhase) {
         switch newPhase {
         case .background:

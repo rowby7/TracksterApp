@@ -23,6 +23,14 @@ struct RunDetailView: View {
     
     var body: some View {
         Map {
+            if let start = viewModel.coordinates.first {
+                Marker("Start", systemImage: "flag.fill", coordinate: start)
+                    .tint(.green)
+            }
+            if viewModel.isDrawingFinished, let finish = viewModel.coordinates.last {
+                Marker("Finish", systemImage: "flag.checkered", coordinate: finish)
+                      .tint(.black)
+            }
             MapPolyline(coordinates: viewModel.visibleCoordinates)
                 .stroke(.orange, lineWidth: 5)
 
@@ -38,11 +46,10 @@ struct RunDetailView: View {
         .ignoresSafeArea()
         .task {
             viewModel.loadRoute()
-            // Reduce Motion users get the whole route at once instead of the drawing animation
             await viewModel.drawRoute(animated: !reduceMotion)
         }
         .sheet(isPresented: $isShowingPanel) {
-            RunDetailPanelView(run: run)
+            RunDetailPanelView(run: run, splits: viewModel.splits)
                 .presentationBackground(.black)
                 .environment(\.colorScheme, .dark)
                 .presentationDetents(

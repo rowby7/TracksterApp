@@ -148,10 +148,10 @@ shows up — one on screen at a time, so it can afford to be one.
       list this long the old pattern builds every detail view up front.
 - [x] Pace, on the detail screen. Not stored — derive `duration / distance`, format
       `mm:ss /mi`. Make it a computed property on `Run` so the splits list can reuse it.
-- [ ] Draw the route with `MapPolyline` over the run's `RoutePoint`s.
-- [ ] Auto-frame the map to the route's bounding region.
-- [ ] Start/finish markers (green pin, checkered flag).
-- [ ] Per-mile splits list on the detail screen.
+- [x] Draw the route with `MapPolyline` over the run's `RoutePoint`s.
+- [x] Auto-frame the map to the route's bounding region.
+- [x] Start/finish markers (green pin, checkered flag).
+- [x] Per-mile splits list on the detail screen.
 
 **Done when:** you finish a run and immediately want to look at the map.
 
@@ -174,7 +174,7 @@ shows up — one on screen at a time, so it can afford to be one.
 
 - [x] Move `SWIFT_VERSION` to 6.0 and fix the concurrency warnings. Run the
       `swift-concurrency-pro` and `swiftui-pro` skills over the codebase.
-- [ ] Real tests: `RunSession` pace math, distance accumulation, HealthKit de-duplication.
+- [x] Real tests: `RunSession` pace math, distance accumulation, HealthKit de-duplication.
       The template stubs in `TracksterTests` don't test anything.
 - [ ] App icon + accent color (`Assets.xcassets` is still default).
 - [ ] Dark mode pass — `.fill(.background)` cards need checking.

@@ -12,6 +12,32 @@ extension Run {
         startDate.formatted(date: .abbreviated, time: .shortened)
     }
 
+    /// "Morning Run", "Evening Run"… from when it started, like Strava's default names
+    var titleText: String {
+        switch Calendar.current.component(.hour, from: startDate) {
+        case 5..<12: "Morning Run"
+        case 12..<17: "Afternoon Run"
+        case 17..<21: "Evening Run"
+        default: "Night Run"
+        }
+    }
+
+    /// "Saturday, Oct 18 · 7:12 AM"
+    var startDetailText: String {
+        let day = startDate.formatted(.dateTime.weekday(.wide).month(.abbreviated).day())
+        let time = startDate.formatted(date: .omitted, time: .shortened)
+        return "\(day) · \(time)"
+    }
+
+    /// Just the number of miles, like "3.17", for when the unit is styled separately
+    var distanceNumberText: String {
+        guard let distance else { return "--" }
+        return (distance / 1609.344).formatted(.number.precision(.fractionLength(2)))
+    }
+
+    /// True when the run came in from Apple Health (usually recorded on an Apple Watch)
+    var isImported: Bool { healthKitID != nil }
+
     var durationText: String {
         Duration.seconds(duration).formatted(.time(pattern: .hourMinuteSecond))
     }
