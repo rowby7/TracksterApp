@@ -10,7 +10,18 @@ import WatchKit
 import HealthKit
 
 @Observable
-final class WorkoutManager {
+final class WorkoutManager: NSObject, HKLiveWorkoutBuilderDelegate {
+    func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
+        
+        guard collectedTypes.contains(HKQuantityType(.heartRate)) {
+            
+        }
+    }
+    
+    func workoutBuilderDidCollectEvent(_ workoutBuilder: HKLiveWorkoutBuilder) {
+        <#code#>
+    }
+    
     private let healthStore = HKHealthStore()
     private var session: HKWorkoutSession?
     private var builder: HKLiveWorkoutBuilder?
@@ -56,5 +67,10 @@ final class WorkoutManager {
         isRunning = false
         self.session = nil
         self.builder = nil
+    }
+    
+    
+    private func startHeartRateQuery(quantityTypeIdentifier: HKQuantityTypeIdentifier) {
+        
     }
 }
