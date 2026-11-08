@@ -11,11 +11,21 @@ struct WorkoutView: View {
     
     @Environment(WorkoutManager.self) private var viewModel
     var body: some View {
-        
-        if viewModel.isRunning {
+        VStack {
             
-        } else {
-            HomeView()
+            
+            if viewModel.isRunning {
+                Text("Running")
+            } else {
+                HomeView()
+            }
+        }
+        .task {
+            do {
+                try await viewModel.requestAuthorization()
+            } catch {
+                print("Health permission failed: \(error)")
+            }
         }
     }
 
@@ -55,7 +65,11 @@ struct HomeView: View {
     }
     private func startWorkout() {
         Task {
-           try? await viewModel.start()
+            do {
+                try await viewModel.start()
+            } catch {
+                print("Starting the workout failed: \(error)")
+            }
         }
     }
 }
