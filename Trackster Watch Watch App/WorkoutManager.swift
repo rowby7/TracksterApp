@@ -16,6 +16,19 @@ final class WorkoutManager: NSObject, HKLiveWorkoutBuilderDelegate {
 
     private(set) var isRunning = false
     private(set) var heartRate: Double = 0
+    private(set) var distance: Double = 0
+    private(set) var calories: Double = 0
+    var elapsedTime: TimeInterval {
+        builder?.elapsedTime ?? 0
+    }
+    var pace: Double {
+        guard miles > 0 else { return 0 }
+        return elapsedTime / miles
+    }
+    
+    var miles: Double {
+        return distance/1609.344
+    }
 
     // MARK: - HealthKit plumbing
 
@@ -73,10 +86,31 @@ final class WorkoutManager: NSObject, HKLiveWorkoutBuilderDelegate {
     // MARK: - Builder delegate (HealthKit calls these, from a background thread)
 
     nonisolated func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
-        if collectedTypes.contains(HKQuantityType(.heartRate)) {
+        
+        
+        for type in collectedTypes {
+            guard let quantityType = type as? HKQuantityType else { continue }
+            let statistics = workoutBuilder.statistics(for: quantityType)
             _ = Task { @MainActor in
-                heartRate = workoutBuilder.statistics(for: HKQuantityType(.heartRate))?.mostRecentQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+                update(from: statistics)
             }
+        }
+    }
+    
+    private func update(from statistics: HKStatistics?) {
+        guard let statistics else { return }
+        
+        switch statistics.quantityType {
+        case HKQuantityType(.heartRate):
+            heartRate = statistics.mostRecentQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+            
+        case HKQuantityType(.distanceWalkingRunning):
+            distance = statistics.sumQuantity()?.doubleValue(for: HKUnit.meter()) ?? 0.0
+            
+        case HKQuantityType(.activeEnergyBurned):
+            calories = statistics.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie()) ?? 0.0
+        default:
+            break
         }
     }
 
@@ -85,9 +119,5 @@ final class WorkoutManager: NSObject, HKLiveWorkoutBuilderDelegate {
         return
     }
 
-    // MARK: - Unused
 
-    private func startHeartRateQuery(quantityTypeIdentifier: HKQuantityTypeIdentifier) {
-
-    }
 }
