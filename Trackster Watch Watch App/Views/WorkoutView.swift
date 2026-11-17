@@ -7,15 +7,18 @@
 
 import SwiftUI
 
+enum Page {
+    case stats
+    case controls
+}
 struct WorkoutView: View {
     
     @Environment(WorkoutManager.self) private var viewModel
+    
     var body: some View {
         VStack(alignment: .leading) {
-            
-            
             if viewModel.isRunning {
-                ActiveView()
+                TabbedView()
             } else {
                 HomeView()
             }
@@ -24,6 +27,7 @@ struct WorkoutView: View {
         .task {
             do {
                 try await viewModel.requestAuthorization()
+                viewModel.requestLocationAuthorization()
             } catch {
                 print("Health permission failed: \(error)")
             }
@@ -64,6 +68,7 @@ struct HomeView: View {
             .navigationTitle("Trackster")
         }
     }
+    
     private func startWorkout() {
         Task {
             do {
@@ -75,7 +80,19 @@ struct HomeView: View {
     }
 }
 
-
+struct TabbedView: View {
+    @State private var selection: Page = .stats
+    
+    var body: some View {
+        TabView(selection: $selection) {
+            ControlsView()
+                .tag(Page.controls)
+            ActiveView()
+                .tag(Page.stats)
+        }
+        .tabViewStyle(.page)
+    }
+}
 struct ActiveView: View {
     @Environment(WorkoutManager.self) private var viewModel
     
@@ -96,6 +113,63 @@ struct ActiveView: View {
     }
 }
 
+
+struct ControlsView: View {
+    @Environment(WorkoutManager.self) private var viewModel
+    var body: some View {
+        HStack {
+            ControlButton(title: "End", systemImage: "xmark", tint: .red, action: endWorkout)
+
+            // Shows Pause while running, Resume while paused
+            ControlButton(
+                title: viewModel.isPaused ? "Resume" : "Pause",
+                systemImage: viewModel.isPaused ? "play.fill" : "pause.fill",
+                tint: .yellow,
+                action: togglePause
+            )
+        }
+    }
+
+    private func togglePause() {
+        // TODO (yours): call pause() or resume() on viewModel, depending on isPaused
+        viewModel.isPaused ? viewModel.resume() : viewModel.pause()
+    }
+
+    private func endWorkout() {
+        Task {
+            do {
+                try await viewModel.end()
+            } catch {
+                print("Ending the workout failed: \(error)")
+            }
+        }
+    }
+}
+
+/// A round, tinted Watch control with its caption underneath.
+struct ControlButton: View {
+    let title: String
+    let systemImage: String
+    let tint: Color
+    let action: () -> Void
+
+    var body: some View {
+        VStack {
+            Button(title, systemImage: systemImage, action: action)
+                .labelStyle(.iconOnly)       // VoiceOver still reads the title
+                .font(.title2.bold())
+                .buttonStyle(.bordered)
+                .buttonBorderShape(.circle)
+                .controlSize(.large)
+                .tint(tint)
+
+            // Visible caption only; the button already says the title to VoiceOver
+            Text(title)
+                .accessibilityHidden(true)
+        }
+    }
+}
+
 struct WorkoutCard: View {
     
     let title: String
@@ -103,17 +177,15 @@ struct WorkoutCard: View {
     var unit: String? = nil
 
     var body: some View {
-        // All white (the default .primary on a Watch), so every stat is easy to read
         VStack(alignment: .leading) {
             Text(title)
                 .font(.footnote)
 
-            // Unit sits on the number's baseline, in a smaller size
             HStack(alignment: .firstTextBaseline) {
                 Text(result)
                     .font(.title.bold())
                     .fontDesign(.rounded)
-                    .monospacedDigit()   // ticking digits don't shift sideways
+                    .monospacedDigit()
 
                 if let unit {
                     Text(unit)
@@ -125,10 +197,6 @@ struct WorkoutCard: View {
         .accessibilityElement(children: .combine)   // VoiceOver: "Heart Rate, 156, BPM"
     }
 }
-//#Preview {
-//    ActiveView()
-//        .environment(WorkoutManager())
-//}
 
 #Preview {
     ScrollView {
@@ -139,4 +207,9 @@ struct WorkoutCard: View {
             WorkoutCard(title: "Distance", result: "1.91", unit: "mi")
         }
     }
+}
+
+#Preview("Controls") {
+    ControlsView()
+        .environment(WorkoutManager())
 }

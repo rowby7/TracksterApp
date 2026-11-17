@@ -693,6 +693,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Trackster Watch";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Trackster reads your heart rate and workouts to show your run stats.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Trackster saves your runs to Apple Health.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Trackster uses your location while you run to measure your distance and draw your route.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = rowby7.Trackster;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -730,6 +731,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Trackster Watch";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Trackster reads your heart rate and workouts to show your run stats.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Trackster saves your runs to Apple Health.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Trackster uses your location while you run to measure your distance and draw your route.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = rowby7.Trackster;
 				LD_RUNPATH_SEARCH_PATHS = (
